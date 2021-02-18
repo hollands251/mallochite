@@ -5,3 +5,4 @@ Mallochite is a free and open source chat application built with the design phil
 Developers:
 Name                Email                           Title
 Andrew Hollands     holandre@sheridancollege.ca     Project Lead
+Mansur Oralov       oralov.mansur@gmail.com         Developer
