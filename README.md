@@ -6,4 +6,5 @@ Developers:
 Name                Email                           Title
 Andrew Hollands     holandre@sheridancollege.ca     Project Lead
 Mansur Oralov       oralov.mansur@gmail.com         Developer/Administrative assistant
+Joseph Escober		escober@sheridancollege.ca      Developer
 Sean Brachvogel     SeanCBrachvogelgmail.com		Project member  
