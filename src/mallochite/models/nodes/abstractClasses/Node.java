@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import mallochite.models.exceptions.UninitializedSocket;
@@ -18,6 +19,7 @@ public abstract class Node extends Thread
 {
 	private String hostIpAddress;
     private Socket socket;
+    private ServerSocket serverSocket;
     private BufferedReader in;
     private PrintStream out;
     private String messageBuffer;
@@ -28,6 +30,14 @@ public abstract class Node extends Thread
     /* Must have hostIp Address
      */
     public Node ( String hostIpAddress )
+    {
+    	this.hostIpAddress = hostIpAddress;
+    }
+    
+    /*
+     * optionally set port right away instead of getter and setter
+     */
+    public Node ( String hostIpAddress , int portToUse )
     {
     	this.hostIpAddress = hostIpAddress;
     }
@@ -51,6 +61,20 @@ public abstract class Node extends Thread
             throw socketException;
         }
 	}
+	
+	
+    public void startListeningOnPort ( int portNumberToUse )
+    {
+        try
+        {
+            this.serverSocket = new ServerSocket( portNumberToUse );
+            this.start();
+        }
+        catch ( IOException ex )
+        {
+                ex.printStackTrace();
+        }
+    }
 	
 	
 	/* In: 			take no arguments but works with this.in , this.out and this.socket

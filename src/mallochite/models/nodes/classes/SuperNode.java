@@ -8,4 +8,9 @@ public class SuperNode extends Node
 	{
 		super ( hostIpAddress );
 	}
+	
+    public SuperNode ( String hostIpAddress , int portToUse )
+    {
+    	super ( hostIpAddress , portToUse );
+    }
 }
