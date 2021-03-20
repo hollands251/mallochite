@@ -14,13 +14,23 @@ public class Mallochite
 		
 		try
 		{
-			subNode1.openSocket("192.168.2.58", 43434);
-			subNode1.closeSocket();
-		}
-		catch ( IOException ex )
+			subNode1.startListeningOnPort( 64341 );
+			
+            try
+            {
+                Thread.sleep( 60000 );
+            }
+            catch( Exception e )
+            {
+                e.printStackTrace();
+            }
+            
+			subNode1.closeServerSocket();
+		} 
+		catch (IOException e)
 		{
-			ex.printStackTrace();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
 	}
 }

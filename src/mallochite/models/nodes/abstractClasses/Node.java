@@ -14,6 +14,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import mallochite.models.exceptions.UninitializedSocket;
+import mallochite.models.nodes.classes.*;
 
 public abstract class Node extends Thread
 {
@@ -75,6 +76,8 @@ public abstract class Node extends Thread
                 ex.printStackTrace();
         }
     }
+    
+    // must add a stopListenOnPort method
 	
 	
 	/* In: 			take no arguments but works with this.in , this.out and this.socket
@@ -88,6 +91,20 @@ public abstract class Node extends Thread
             this.in.close();
             this.out.close();
             this.socket.close();
+        }
+        catch ( SocketException ex )
+        {
+            throw ex;
+        }
+	}
+	
+	
+	public void closeServerSocket () throws IOException
+	{
+        try
+        {
+            this.serverSocket.close();
+            this.interrupt();
         }
         catch ( SocketException ex )
         {
@@ -147,34 +164,21 @@ public abstract class Node extends Thread
 	@Override
 	public void run ()
 	{
-		while ( true )
-		{
-			if (this.messageBuffer.equals(this.previouslyRead) || this.previouslyRead.equals(""))
-			{
-				try
-				{
-					this.updateMessageBuffer();
-					this.previouslyRead = this.messageBuffer;
-				} catch (IOException | UninitializedSocket e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} 
-			if ( this.messageToSend.equals( this.previouslySent) || this.previouslySent.equals("") )
-			{
-				try
-				{
-					this.sendMessage( this.messageToSend );
-					this.previouslySent = this.messageToSend;
-				} 
-				catch (SocketException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+        try
+        {
+            System.out.println( "Listening for a connection" );
+
+            // Call accept() to receive the next connection
+            Socket socket = this.serverSocket.accept();
+
+            // Pass the socket to the RequestHandler thread for processing
+            RequestHandler requestHandler = new RequestHandler( socket );
+            requestHandler.start();
+        }
+        catch ( IOException ex )
+        {
+            ex.printStackTrace();
+        }
 	}
 
 	
