@@ -2,9 +2,9 @@ package mallochite.models.nodes.classes;
 
 import mallochite.models.nodes.abstractClasses.*;
 
-public class SuperNode extends Node
+public class SubNode extends Node
 {
-	public SuperNode ( String hostIpAddress )
+	public SubNode ( String hostIpAddress )
 	{
 		super ( hostIpAddress );
 	}
