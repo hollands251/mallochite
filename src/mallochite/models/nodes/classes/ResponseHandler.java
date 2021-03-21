@@ -44,5 +44,9 @@ public class ResponseHandler extends Thread
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        finally
+        {
+            this.interrupt();
+        }
 	}
 }
