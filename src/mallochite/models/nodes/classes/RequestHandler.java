@@ -43,13 +43,16 @@ public class RequestHandler extends Thread
             // Close our connection
             in.close();
             socket.close();
-            this.interrupt();
-
-            System.out.println( "Connection closed" );
         }
         catch( Exception e )
         {
+            this.interrupt();
             e.printStackTrace();
+        }
+        finally
+        {
+        	System.out.println( "Connection closed" );
+            this.interrupt();
         }
     }
 }
