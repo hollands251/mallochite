@@ -13,6 +13,8 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Scanner;
+
 import mallochite.models.exceptions.UninitializedSocket;
 import mallochite.models.nodes.classes.*;
 
@@ -24,9 +26,6 @@ public abstract class Node extends Thread
     private BufferedReader in;
     private PrintStream out;
     private String messageBuffer;
-    private String messageToSend;
-	private String previouslyRead;
-	private String previouslySent;
     
     /* Must have hostIp Address
      */
@@ -51,11 +50,20 @@ public abstract class Node extends Thread
      */
 	public void openSocket ( String remoteIpAddress , int portNumberToUse ) throws IOException , SocketException
 	{
+		Scanner scanner = new Scanner (System.in);
+		
         try
         {
             this.socket = new Socket ( remoteIpAddress , portNumberToUse );
             this.in = new BufferedReader ( new InputStreamReader( socket.getInputStream() ) );
             this.out = new PrintStream ( socket.getOutputStream() );
+            this.messageBuffer = " "; // made empty so can be compared in if statement
+            
+            while ( !this.messageBuffer.equals( "" ) )
+            {
+            	this.messageBuffer = scanner.nextLine();
+            	this.sendMessage( this.messageBuffer );
+            }
         }
         catch ( SocketException socketException )
         {
@@ -73,7 +81,7 @@ public abstract class Node extends Thread
         }
         catch ( IOException ex )
         {
-                ex.printStackTrace();
+            ex.printStackTrace();
         }
     }
     
@@ -121,6 +129,7 @@ public abstract class Node extends Thread
 	public void sendMessage ( String message ) throws SocketException
 	{
 		this.out.println( message );
+		this.out.flush();
 	}
 	
 	
@@ -166,14 +175,16 @@ public abstract class Node extends Thread
 	{
         try
         {
+        	Socket socket = this.serverSocket.accept();
+        	
             System.out.println( "Listening for a connection" );
-
-            // Call accept() to receive the next connection
-            Socket socket = this.serverSocket.accept();
 
             // Pass the socket to the RequestHandler thread for processing
             RequestHandler requestHandler = new RequestHandler( socket );
+            ResponseHandler responseHandler = new ResponseHandler( socket );
+            
             requestHandler.start();
+            responseHandler.start();
         }
         catch ( IOException ex )
         {
