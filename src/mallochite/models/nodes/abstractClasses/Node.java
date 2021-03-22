@@ -68,15 +68,13 @@ public abstract class Node extends Thread
         	Socket socketForListening = this.serverSocket.accept();
         	this.connectionManager = new ConnectionManager( socketForListening );
             this.connectionManager.start();
-            
-            this.createSocketForSendingData();
         }
         
         catch ( IOException ex ) { ex.printStackTrace(); }
 	}
 
 	
-	private void createSocketForSendingData() throws UnknownHostException, IOException
+	public void createSocketForSendingData() throws UnknownHostException, IOException
 	{
 		Scanner scanner = new Scanner ( System.in );
 	    BufferedReader in;
@@ -86,21 +84,39 @@ public abstract class Node extends Thread
 		System.out.println( "enter IP address to connect to" );
 		String remoteIpAddress = scanner.nextLine();
 
-		System.out.println( "enter port to listen on" );
+		System.out.println( "enter port to connect to" );
 		int portToListen = scanner.nextInt();
 		
 		socket = new Socket ( remoteIpAddress , portToListen );
         in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
         out = new PrintWriter( socket.getOutputStream() );
         
+        for ( int i = 0 ; i < 100000 ; i++ )  { } // waits for thread. Very bad practice, for debugging only
+        
+    	System.out.println( "what do say?" );
+    	String messageOut = scanner.nextLine();
+    	out.println( messageOut );
+    	out.flush();
+		
         String messageIn = in.readLine();
-        String messageOut = "";
+        messageOut = "";
+        
         while ( !messageOut.equals("end") )
         {
-        	messageOut = scanner.nextLine();
-        	System.out.println( messageIn );
+        	out.println( messageOut );
+        	out.flush();
+        	
+        	if ( !messageIn.equals( "" ) )
+        	{
+        		System.out.println(messageIn);
+        		messageIn = "";
+        	}
+        	
+        	messageIn = in.readLine();
+        		
         }
         
+        System.out.println( "closing stuff" );
 		socket.close();
         in.close();
         out.close();
