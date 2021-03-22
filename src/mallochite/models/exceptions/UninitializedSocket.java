@@ -2,7 +2,10 @@ package mallochite.models.exceptions;
 
 public class UninitializedSocket extends Exception
 {	
-    public UninitializedSocket(String errorMessage) {
-        super(errorMessage);
+	static String errorMessage = "Either a socket or a server socket hasn't been initialized";
+	
+    public UninitializedSocket() 
+    {
+        super( errorMessage );
     }
 }

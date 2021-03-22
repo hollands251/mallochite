@@ -23,10 +23,6 @@ public class ResponseHandler extends Thread
 			Scanner scanner = new Scanner( System.in );
 			
 			String outGoingMessage = "";
-			
-            // Write out our header to the client
-            out.println( "Echo Server 1.0" );
-            out.flush();
             
             while( !outGoingMessage.equals( "end" ) )
             {	

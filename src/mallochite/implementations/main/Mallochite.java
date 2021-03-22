@@ -22,11 +22,13 @@ public class Mallochite
 
 		subNode1 = new SubNode( localIpAddress );
 		subNode1.startListeningOnPort( portToListen );
+		subNode1.openSocket(localIpAddress, portToListen);
+		subNode1.start();
 	
         try
         {
         	Thread.sleep( 15000 );
-			subNode1.openSocket( "192.168.2.19" , 34344 );
+			subNode1.openSocket( "192.168.2.53" , 34343 );
             Thread.sleep( 60000 );
 			subNode1.closeServerSocket();
 			subNode1.closeSocket();
