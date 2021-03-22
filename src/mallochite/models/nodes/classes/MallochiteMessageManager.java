@@ -27,38 +27,30 @@ public class MallochiteMessageManager
     	{
     		//message = encryptionManager.decrypt()
     	}
-    	
-    	switch ( message )
+    	else if ( message.contains( "HELLO" ) ) // TODO must make regex to ensure start of line
     	{
-    		case "GREETINGS":
-        		//String pubKey = keyManager.getPubKey();
-        		messageSegment.put( "publicKey" , "tempKey");
-        		messageSegment.put( "body" , "" );
-    			break;
-    			
-    		case "HELLO":
-    			messageSegment = parseHelloHeader( message );
-    			break;
-    			
-    		default:
-    			break;
+    		messageSegment = this.parseHelloHeader( message );
     	}
     	
     	return messageSegment;
     }
     
-    public HashMap parseHelloHeader( String message )
+    public HashMap<String , String> parseHelloHeader( String message )
     {
     	String[] parsedMessage = message.split( this.deliminators );
-    	HashMap helloMessageHashMap = null;
+    	HashMap<String , String > helloMessageHashMap = new HashMap<String , String>();
     	
-    	if ( parsedMessage.length > HELLO_PARSE_COUNT )
+    	if ( parsedMessage.length >= HELLO_PARSE_COUNT )
     	{
-        	helloMessageHashMap.put( "Method", parsedMessage[0]);
-        	helloMessageHashMap.put( "UUID", parsedMessage[1]);
-        	helloMessageHashMap.put( "IPv4", parsedMessage[2]);
-        	helloMessageHashMap.put( "port", parsedMessage[3]);
-        	helloMessageHashMap.put( "key", parsedMessage[4]);
+        	helloMessageHashMap.put( "Method", parsedMessage[0] );
+        	helloMessageHashMap.put( "UUID", parsedMessage[1] );
+        	helloMessageHashMap.put( "IPv4", parsedMessage[2] );
+        	helloMessageHashMap.put( "Port", parsedMessage[3] );
+        	helloMessageHashMap.put( "Key",  parsedMessage[4] );
+    	}
+    	else
+    	{
+        	helloMessageHashMap.put( "Method", "INVALID");
     	}
     	
     	return helloMessageHashMap;

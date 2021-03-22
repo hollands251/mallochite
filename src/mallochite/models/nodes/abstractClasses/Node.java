@@ -23,10 +23,12 @@ public abstract class Node extends Thread
 	private String hostIpAddress;
     private ServerSocket serverSocket;
     private ConnectionManager connectionManager;
+    private boolean listening;
     
     public Node ( String hostIpAddress )
     {
     	this.hostIpAddress = hostIpAddress;
+    	this.listening = false;
     }
 	
 	public void closeServerSocket () throws IOException
@@ -34,12 +36,10 @@ public abstract class Node extends Thread
         try
         {
             this.serverSocket.close();
+            this.listening = false;
             this.interrupt();
         }
-        catch ( SocketException ex )
-        {
-            throw ex;
-        }
+        catch ( SocketException ex ) { throw ex; }
 	}
 	
     public void startListeningOnPort ( int portNumberToUse )
@@ -47,11 +47,11 @@ public abstract class Node extends Thread
         try
         {
             this.serverSocket = new ServerSocket( portNumberToUse );
+            this.listening = true;
+            this.start();    
         }
-        catch ( IOException ex )
-        {
-            ex.printStackTrace();
-        }
+        
+        catch ( IOException ex ) { ex.printStackTrace(); }
     }
 	
 	/* runs methods on a separate thread 
@@ -61,27 +61,17 @@ public abstract class Node extends Thread
 	@Override
 	public void run ()
 	{
-        try
+        try 
         {
-        	if ( this.serverSocket != null )
-        	{
-            	Socket socketForListening = this.serverSocket.accept();
-            	this.connectionManager = new ConnectionManager( socketForListening );
-                this.connectionManager.start();
-        	}
-        	else
-        	{
-        		UninitializedSocket usEx = new UninitializedSocket();
-        		throw usEx;
-        	}
-            
+        	Socket socketForListening = this.serverSocket.accept();
+        	this.connectionManager = new ConnectionManager( socketForListening );
+            this.connectionManager.start();
         }
-        catch ( IOException | UninitializedSocket ex )
-        {
-            ex.printStackTrace();
-        }
+        
+        catch ( IOException ex ) { ex.printStackTrace(); }
 	}
 
+	
 	public String getHostIpAddress()
 	{
 		return hostIpAddress;
@@ -90,5 +80,15 @@ public abstract class Node extends Thread
 	public void setHostIpAddress(String hostIpAddress)
 	{
 		this.hostIpAddress = hostIpAddress;
+	}
+
+	public boolean isListening()
+	{
+		return listening;
+	}
+
+	public void setListening(boolean listening)
+	{
+		this.listening = listening;
 	}
 }

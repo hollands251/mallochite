@@ -32,16 +32,24 @@ public class ConnectionManager extends Thread
         {
             System.out.println( "Received a connection" );
             MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
-            
             String receivedMessage = in.readLine();
-            while( receivedMessage != null )
+            
+            while ( receivedMessage != null && !receivedMessage.equals( "end" ) )
             {	
             	this.messageSegment = mallochiteMessageManager.reactToMessage( receivedMessage );
             	
-            	if ( messageSegment.get( "method" ).equals( "HELLO" ) )
+            	if ( this.messageSegment != null )
             	{
-            		this.openSocketForChat ( messageSegment.get( "IPv4" ) , messageSegment.get( "port" ) );
+            		System.out.println( receivedMessage );
+            		this.out.println( messageSegment.get( "Method" ) );
+            		this.out.println( messageSegment.get( "IPv4" ) );
+            		this.out.println( messageSegment.get( "Port" ) );
+            		this.out.flush();
+            		this.messageSegment = null;
+            		//this.openSocketForChat ( messageSegment.get( "IPv4" ) , messageSegment.get( "port" ) );
             	}
+            	
+            	receivedMessage = in.readLine();
             }
             
             this.in.close();
