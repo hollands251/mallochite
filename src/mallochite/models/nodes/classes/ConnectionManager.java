@@ -5,18 +5,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.HashMap;
 
-public class Negotiator extends Thread
+public class ConnectionManager extends Thread
 {
     private Socket metaSocket;				// responsible for establishing connections, not for chat
     private HashMap<String , Socket> chatSockets;
+    private HashMap<String , String> messageSegment;
     private BufferedReader in;
     private PrintWriter out;
     
     
-    public Negotiator( Socket socket ) throws IOException
+    public ConnectionManager( Socket socket ) throws IOException
     {
         this.metaSocket = socket;
         this.in = new BufferedReader( new InputStreamReader( metaSocket.getInputStream() ) );
@@ -29,16 +31,20 @@ public class Negotiator extends Thread
         try
         {
             System.out.println( "Received a connection" );
-
-            Socket socketForSendingData = new Socket ( remoteIpAddress , portNumberToUse );
-            ResponseHandler responseHandler = new ResponseHandler( socketForSendingData );
-            responseHandler.start();
             
             String receivedMessage = in.readLine();
             while( receivedMessage != null )
             {	
-            	MMPManager ( receivedMessage );
+            	this.messageSegment = MallochiteMessageManager.reactToMessage( receivedMessage );
+            	
+            	if ( messageSegment.get( "method" ).equals( "HELLO" ) )
+            	{
+            		this.openSocketForChat ( messageSegment.get( "IPv4" ) , messageSegment.get( "port" ) );
+            	}
             }
+            
+            this.in.close();
+            this.metaSocket.close();
 
         }
         catch( Exception e )
@@ -48,12 +54,19 @@ public class Negotiator extends Thread
         finally
         {
         	System.out.println( "Connection closed" );
-            this.in.close();
             this.out.close();
-            this.metaSocket.close();
             this.interrupt();
         }
     }
+
+	private void openSocketForChat(String ipAddressToConnect, String portToUseString) throws UnknownHostException, IOException
+	{
+		int portToUse = Integer.parseInt( portToUseString );
+		
+        Socket socketForSendingData = new Socket ( ipAddressToConnect , portToUse );
+        ChatManager chatManager = new ChatManager( socketForSendingData );
+        chatManager.start();
+	}
     
     
 
