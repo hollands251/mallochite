@@ -5,6 +5,9 @@ import java.util.HashMap;
 
 public class MallochiteMessageManager
 {
+	private String deliminators = " "; // change to new line
+	private final int HELLO_PARSE_COUNT = 5;
+	
     public MallochiteMessageManager () {};
     
     
@@ -46,10 +49,18 @@ public class MallochiteMessageManager
     
     public HashMap parseHelloHeader( String message )
     {
-    	//deliminators = " "; // change to new line
-    	//String parsedMessage = message
-    	HashMap parsedHelloMessage = null;
+    	String[] parsedMessage = message.split( this.deliminators );
+    	HashMap helloMessageHashMap = null;
     	
-    	return parsedHelloMessage;
+    	if ( parsedMessage.length > HELLO_PARSE_COUNT )
+    	{
+        	helloMessageHashMap.put( "Method", parsedMessage[0]);
+        	helloMessageHashMap.put( "UUID", parsedMessage[1]);
+        	helloMessageHashMap.put( "IPv4", parsedMessage[2]);
+        	helloMessageHashMap.put( "port", parsedMessage[3]);
+        	helloMessageHashMap.put( "key", parsedMessage[4]);
+    	}
+    	
+    	return helloMessageHashMap;
     }
 }
