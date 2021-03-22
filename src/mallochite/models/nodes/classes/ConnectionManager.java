@@ -31,11 +31,12 @@ public class ConnectionManager extends Thread
         try
         {
             System.out.println( "Received a connection" );
+            MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
             
             String receivedMessage = in.readLine();
             while( receivedMessage != null )
             {	
-            	this.messageSegment = MallochiteMessageManager.reactToMessage( receivedMessage );
+            	this.messageSegment = mallochiteMessageManager.reactToMessage( receivedMessage );
             	
             	if ( messageSegment.get( "method" ).equals( "HELLO" ) )
             	{
@@ -47,10 +48,9 @@ public class ConnectionManager extends Thread
             this.metaSocket.close();
 
         }
-        catch( Exception e )
-        {
-            e.printStackTrace();
-        }
+        
+        catch( Exception e ) { e.printStackTrace(); }
+        
         finally
         {
         	System.out.println( "Connection closed" );

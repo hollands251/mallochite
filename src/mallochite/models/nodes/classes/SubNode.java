@@ -8,9 +8,4 @@ public class SubNode extends Node
 	{
 		super ( hostIpAddress );
 	}
-	
-    public SubNode ( String hostIpAddress , int portToUse )
-    {
-    	super ( hostIpAddress , portToUse );
-    }
 }

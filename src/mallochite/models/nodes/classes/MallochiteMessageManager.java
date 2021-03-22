@@ -15,7 +15,7 @@ public class MallochiteMessageManager
      * After decrypting the metadata of the message is parsed, stored in a hashmap and returned to be
      * used by the connection Negotiator 
      */
-    static public HashMap<String , String> reactToMessage ( String message )
+    public HashMap<String , String> reactToMessage ( String message )
     {
     	
     	HashMap messageSegment = null;
@@ -44,8 +44,10 @@ public class MallochiteMessageManager
     	return messageSegment;
     }
     
-    public static HashMap parseHelloHeader( String message )
+    public HashMap parseHelloHeader( String message )
     {
+    	//deliminators = " "; // change to new line
+    	//String parsedMessage = message
     	HashMap parsedHelloMessage = null;
     	
     	return parsedHelloMessage;

@@ -22,31 +22,12 @@ public abstract class Node extends Thread
 {
 	private String hostIpAddress;
     private ServerSocket serverSocket;
+    private ConnectionManager connectionManager;
     
-    /* Must have hostIp Address
-     */
     public Node ( String hostIpAddress )
     {
     	this.hostIpAddress = hostIpAddress;
     }
-	
-	
-	/* In: 			take no arguments but works with this.in , this.out and this.socket
-	 * Process: 	closes all attributes listed above
-	 * out:			Returns void on success, throws an IOException or SocketException on fail
-	 */
-	public void closeSocket () throws SocketException , IOException
-	{
-        try
-        {
-            this.socket.close();
-        }
-        catch ( SocketException ex )
-        {
-            throw ex;
-        }
-	}
-	
 	
 	public void closeServerSocket () throws IOException
 	{
@@ -61,18 +42,6 @@ public abstract class Node extends Thread
         }
 	}
 	
-	
-	
-	/* in: 		takes a String to send to client
-	 * process:	prints message to this.out (which is the output for the socket)
-	 * out:		returns void on success, throws SocketException on fail
-	 */
-//	public void sendMessage ( String message ) throws SocketException
-//	{
-//		this.out.println( message );
-//		this.out.flush();
-//	}
-	
     public void startListeningOnPort ( int portNumberToUse )
     {
         try
@@ -84,24 +53,6 @@ public abstract class Node extends Thread
             ex.printStackTrace();
         }
     }
-	
-    /* in: 		Takes String of IP address to send message to and port as an int
-     * process: Tries to open Socket that connects to a remote client. Creates a buffer reader and printstream
-     * 			to listen to the socket's traffic 
-     * out: 	Return void or throws SocketException or IOException on failure
-     */
-	public void openSocket ( String remoteIpAddress , int portNumberToUse ) throws IOException , SocketException
-	{
-		
-        try
-        {
-            this.socket = new Socket ( remoteIpAddress , portNumberToUse );
-        }
-        catch ( SocketException socketException )
-        {
-            throw socketException;
-        }
-	}
 	
 	/* runs methods on a separate thread 
 	 * 
@@ -115,7 +66,8 @@ public abstract class Node extends Thread
         	if ( this.serverSocket != null )
         	{
             	Socket socketForListening = this.serverSocket.accept();
-                ConnectionManager.start();
+            	this.connectionManager = new ConnectionManager( socketForListening );
+                this.connectionManager.start();
         	}
         	else
         	{
@@ -139,27 +91,4 @@ public abstract class Node extends Thread
 	{
 		this.hostIpAddress = hostIpAddress;
 	}
-
-
-//	public String getMessageBuffer() throws UninitializedSocket , IOException
-//	{
-//		try
-//		{
-//			this.updateMessageBuffer ();
-//			return messageBuffer;
-//		}
-//		catch ( UninitializedSocket ex )
-//		{
-//			throw ex = new UninitializedSocket ("this method requires openSocket to be run first");
-//		}
-//		
-//	}
-
-
-	public void setMessageBuffer(String messageBuffer)
-	{
-		this.messageBuffer = messageBuffer;
-	}
-	
-	
 }
