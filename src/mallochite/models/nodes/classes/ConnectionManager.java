@@ -49,7 +49,7 @@ public class ConnectionManager extends Thread
             		//this.openSocketForChat ( messageSegment.get( "IPv4" ) , messageSegment.get( "port" ) );
             	}
             	
-            	receivedMessage = in.readLine();
+            	receivedMessage = in.readLine(); // always listening to the socket
             }
             
             this.in.close();

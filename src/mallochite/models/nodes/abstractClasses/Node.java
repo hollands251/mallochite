@@ -66,12 +66,25 @@ public abstract class Node extends Thread
         	Socket socketForListening = this.serverSocket.accept();
         	this.connectionManager = new ConnectionManager( socketForListening );
             this.connectionManager.start();
+            
+            this.createSocketForSendingData();
         }
         
         catch ( IOException ex ) { ex.printStackTrace(); }
 	}
 
 	
+	private void createSocketForSendingData()
+	{
+		Scanner scanner = new Scanner ( System.in );
+		
+		System.out.println( "enter your IP address" );
+		String localIpAddress = scanner.nextLine();
+
+		System.out.println( "enter port to listen on" );
+		int portToListen = scanner.nextInt();
+	}
+
 	public String getHostIpAddress()
 	{
 		return hostIpAddress;
