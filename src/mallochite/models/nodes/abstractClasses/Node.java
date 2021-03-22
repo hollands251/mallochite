@@ -21,9 +21,7 @@ import mallochite.models.nodes.classes.*;
 public abstract class Node extends Thread
 {
 	private String hostIpAddress;
-    private Socket socket;
     private ServerSocket serverSocket;
-    private String messageBuffer;
     
     /* Must have hostIp Address
      */
@@ -31,16 +29,6 @@ public abstract class Node extends Thread
     {
     	this.hostIpAddress = hostIpAddress;
     }
-    
-    /*
-     * optionally set port right away instead of getter and setter
-     */
-    public Node ( String hostIpAddress , int portToUse )
-    {
-    	this.hostIpAddress = hostIpAddress;
-    }
-    
-    // must add a stopListenOnPort method
 	
 	
 	/* In: 			take no arguments but works with this.in , this.out and this.socket
@@ -85,36 +73,6 @@ public abstract class Node extends Thread
 //		this.out.flush();
 //	}
 	
-	
-    /* in: 		Takes no arguments but works with this.in
-     * process: Reads from this.in and stores the value in messageBuffer
-     * out: 	Return void or throws IOException on failure
-     */
-//	public void updateMessageBuffer () throws IOException , UninitializedSocket
-//	{
-//		if ( this.socket != null )
-//		{
-//	        try
-//	        {
-//	            this.messageBuffer = this.in.readLine();
-//	            
-//	            while( this.messageBuffer != null )
-//	            {
-//	                this.messageBuffer += in.readLine();
-//	            }
-//	        }
-//	        catch ( IOException iOException )
-//	        {
-//	            throw iOException;
-//	        }
-//		}
-//		else
-//		{
-//			UninitializedSocket usEx = new UninitializedSocket( "this method requires openSocket to be run first" );
-//			throw usEx;
-//		}
-//	}
-	
     public void startListeningOnPort ( int portNumberToUse )
     {
         try
@@ -157,11 +115,7 @@ public abstract class Node extends Thread
         	if ( this.serverSocket != null )
         	{
             	Socket socketForListening = this.serverSocket.accept();
-            	
-                // Pass the socket to the RequestHandler thread for processing
-                RequestHandler requestHandler = new RequestHandler( socketForListening );
-                
-                requestHandler.start();
+                ConnectionManager.start();
         	}
         	else
         	{
