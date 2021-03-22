@@ -5,11 +5,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ResponseHandler extends Thread
+public class ChatManager extends Thread
 {
 	Socket socket;
 	
-	public ResponseHandler( Socket socket )
+	public ChatManager( Socket socket )
 	{
 		this.socket = socket;
 	}
