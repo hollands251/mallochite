@@ -10,9 +10,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import mallochite.models.exceptions.UninitializedSocket;
@@ -74,15 +76,35 @@ public abstract class Node extends Thread
 	}
 
 	
-	private void createSocketForSendingData()
+	private void createSocketForSendingData() throws UnknownHostException, IOException
 	{
 		Scanner scanner = new Scanner ( System.in );
+	    BufferedReader in;
+	    PrintWriter out;
+		Socket socket;
 		
-		System.out.println( "enter your IP address" );
-		String localIpAddress = scanner.nextLine();
+		System.out.println( "enter IP address to connect to" );
+		String remoteIpAddress = scanner.nextLine();
 
 		System.out.println( "enter port to listen on" );
 		int portToListen = scanner.nextInt();
+		
+		socket = new Socket ( remoteIpAddress , portToListen );
+        in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
+        out = new PrintWriter( socket.getOutputStream() );
+        
+        String messageIn = in.readLine();
+        String messageOut = "";
+        while ( !messageOut.equals("end") )
+        {
+        	messageOut = scanner.nextLine();
+        	System.out.println( messageIn );
+        }
+        
+		socket.close();
+        in.close();
+        out.close();
+		
 	}
 
 	public String getHostIpAddress()
