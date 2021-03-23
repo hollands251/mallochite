@@ -104,10 +104,9 @@ public abstract class Node extends Thread
     		
             while ( !messageOut.equals("end") )
             {
-            	if ( !messageIn.equals( "" ) )
+            	if ( in.readLine() != null )
             	{
-            		System.out.println(messageIn);
-            		messageIn = "";
+            		System.out.println( messageIn );
             	}
             	
             	if ( !messageOut.equals( "" ) )

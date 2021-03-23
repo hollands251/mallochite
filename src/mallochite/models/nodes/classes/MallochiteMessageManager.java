@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class MallochiteMessageManager
 {
-	private String deliminators = ":,"; // change to new line
+	private String deliminators = ":"; // change to new line
 	private final int GREET_PARSE_COUNT = 2;
 	private final int CONVERSE_PARSE_COUNT = 4;
 	private final int AFFIRM_PARSE_COUNT = 4;
@@ -57,7 +57,7 @@ public class MallochiteMessageManager
 	    		parsedMessageHashMap = parseDepart( parsedMessage );
 	    		break;
 	    	default:
-	    		parsedMessageHashMap.put( "Method", "INVALID" );
+	    		parsedMessageHashMap.put( "method", "INVALID" );
     	}
     	
     	return parsedMessageHashMap;
