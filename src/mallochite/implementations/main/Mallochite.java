@@ -14,16 +14,16 @@ public class Mallochite
 		Scanner scanner = new Scanner( System.in );
 		SubNode subNode1 = null;
 		
-//		System.out.println( "enter your IP address" );
-//		String localIpAddress = scanner.nextLine();
-//
-//		System.out.println( "enter port to listen on" );
-//		int portToListen = scanner.nextInt();
+		System.out.println( "enter your IP address" );
+		String localIpAddress = scanner.nextLine();
+
+		System.out.println( "enter port to listen on" );
+		int portToListen = scanner.nextInt();
 
 		try
 		{
-			subNode1 = new SubNode( "192.168.2.53" );
-			subNode1.startListeningOnPort( 33333 );
+			subNode1 = new SubNode( localIpAddress );
+			subNode1.startListeningOnPort( portToListen );
 //			subNode1.createSocketForSendingData();
 		
 			while ( subNode1.isListening() ) { }
