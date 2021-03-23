@@ -38,7 +38,7 @@ public class ConnectionManager extends Thread
             
             while ( receivedMessage != null && !receivedMessage.equals( "end" ) )
             {	
-            	this.messageSegment = mallochiteMessageManager.reactToMessage( receivedMessage );
+            	this.messageSegment = mallochiteMessageManager.parseHeader( receivedMessage );
             	
 				if ( this.messageSegment != null )
             	{

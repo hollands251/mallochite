@@ -6,53 +6,92 @@ import java.util.HashMap;
 public class MallochiteMessageManager
 {
 	private String deliminators = " "; // change to new line
-	private final int HELLO_PARSE_COUNT = 5;
+	private final int GREETINGS_PARSE_COUNT = 1;
+	private final int CONVERSE_PARSE_COUNT = 4;
+	private final int AFFIRMATIVE_PARSE_COUNT = 4;
 	
     public MallochiteMessageManager () {};
     
     
-    /*
-     * Takes message from node that is connecting. If it is encrypted, there will be a ENCRYPTED
-     * string prepended to it to let us know to decrypt it.
-     * 
+    /* 
      * After decrypting the metadata of the message is parsed, stored in a hashmap and returned to be
      * used by the connection Negotiator 
      */
-    public HashMap<String , String> reactToMessage ( String message )
+    public HashMap<String , String> parseHeader( String message )
     {
     	
-    	HashMap messageSegment = null;
+    	HashMap messageSegment;
     
-    	if ( message.equals( "ENCRYPTED" ) )
+    	if ( message.contains( "GREETINGS" ) ) // TODO must make regex to ensure start of line
     	{
-    		//message = encryptionManager.decrypt()
+    		messageSegment = this.parseDataFromHeader( message );
     	}
-    	else if ( message.contains( "HELLO" ) ) // TODO must make regex to ensure start of line
+    	else
     	{
-    		messageSegment = this.parseHelloHeader( message );
+    		// decrypt message as GREETINGS is the only one allowed not to be encrypted
+    		messageSegment = this.parseDataFromHeader( message );
     	}
     	
     	return messageSegment;
     }
     
-    public HashMap<String , String> parseHelloHeader( String message )
+    public HashMap<String , String> parseDataFromHeader( String message )
     {
     	String[] parsedMessage = message.split( this.deliminators );
-    	HashMap<String , String > helloMessageHashMap = new HashMap<String , String>();
+    	HashMap<String , String > parsedMessageHashMap = new HashMap<String , String>();
     	
-    	if ( parsedMessage.length >= HELLO_PARSE_COUNT )
+    	switch ( message )
     	{
-        	helloMessageHashMap.put( "Method", parsedMessage[0] );
-        	helloMessageHashMap.put( "UUID", parsedMessage[1] );
-        	helloMessageHashMap.put( "IPv4", parsedMessage[2] );
-        	helloMessageHashMap.put( "Port", parsedMessage[3] );
-        	helloMessageHashMap.put( "Key",  parsedMessage[4] );
+    	case "GREET":
+    		break;
+    	case "CONVERSATE":
+    		break;
+    	case "AFFIRM":
+    		break;
+    	case "DEPART":
+    		break;
+    	default:
+    		parsedMessageHashMap.put( "Method", "INVALID");
+    	}
+    	
+
+
+    	
+    	return helloMessageHashMap;
+    }
+    
+    private HashMap<String , String> parseGreet( String message )
+    {
+    	
+    }
+    
+    private HashMap<String , String> parseConverse( String message )
+    {
+    	HashMap<String , String> parsedConverse = new HashMap<String , String>();
+    	
+    	if ( message.length >= CONVERSE_PARSE_COUNT )
+    	{
+    		parsedMessageHashMap.put( "Method", parsedMessage[0] );
+    		parsedMessageHashMap.put( "UUID", parsedMessage[1] );
+    		parsedMessageHashMap.put( "IPv4", parsedMessage[2] );
+    		parsedMessageHashMap.put( "Port", parsedMessage[3] );
     	}
     	else
     	{
-        	helloMessageHashMap.put( "Method", "INVALID");
+    		parsedMessageHashMap.put( "Method", "INVALID");
     	}
     	
-    	return helloMessageHashMap;
+    	return 
+    		
+    }
+    
+    private HashMap<String , String> parseAffirm( Stringmessage )
+    {
+    	
+    }
+    
+    private HashMap<String , String> parseDepart( Stringmessage )
+    {
+    	
     }
 }
