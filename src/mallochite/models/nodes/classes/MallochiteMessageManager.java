@@ -63,6 +63,37 @@ public class MallochiteMessageManager
     	return parsedMessageHashMap;
     }
     
+	public String generateResponse( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap )
+	{
+		String method = clientMetaDataHashMap.get( "method" ); 
+		int port = Integer.parseInt( clientMetaDataHashMap.get( "port" ) );
+		
+		String publicKey = localMetaDataHashMap.get( "publicKey" );
+		String UUID = localMetaDataHashMap.get( "UUID" );
+		String ipv4 = localMetaDataHashMap.get( "ipv4" );
+		String response;	
+		
+		switch ( method )
+		{
+		case "GREET":
+			response = "GREET:" + publicKey;
+			break;
+		case "AFFIRM":
+			response = "CONVERSE:" + UUID + ":" + ipv4 + ":" + port;
+			break;
+		case "CONVERSE":
+			response = "INVALID"; // this node should never recive a CONVERSE
+			break;
+		case "DEPART":
+			response = "DEPART:" + UUID + ":" + ipv4 + ":" + port;
+			break;
+		default:
+			response = "INVALID";
+			break;
+		}
+		return response;
+	}
+    
     /*
      * The following private methods are helper methods. 
      * They take the array of strings from it's caller and ensures it has the correct amount of parameters

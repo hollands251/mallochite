@@ -14,8 +14,10 @@ public class ConnectionManager extends Thread
     private Socket metaSocket;				// responsible for establishing connections, not for chat
     private HashMap<String , Socket> chatSockets;
     private HashMap<String , String> messageSegment;
+    //private DatabaseManager dbManager; // get from node???
     private BufferedReader in;
     private PrintWriter out;
+    MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
     
     
     public ConnectionManager( Socket socket ) throws IOException
@@ -31,7 +33,6 @@ public class ConnectionManager extends Thread
         try
         {
             System.out.println( "Received a connection" );
-            MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
             String receivedMessage = in.readLine();
             
             while ( receivedMessage != null && !receivedMessage.equals( "end" ) )
@@ -83,6 +84,73 @@ public class ConnectionManager extends Thread
             this.interrupt();
         }
     }
+    
+    /*
+     * Creates a socket with the intent of sending a "GREET" header with public key
+     * Waits for response from socket and reacts accordingly 
+     */
+	public void socketForFirstContact( String remoteIpAddress , int portToListen ) throws UnknownHostException, IOException
+	{
+
+		Socket socket;
+	    BufferedReader in;
+	    PrintWriter out;
+		HashMap<String , String> localMetaDataHashMap;
+        String messageIn = "";
+        String messageOut = "GREET:pubkey";
+			
+        socket = new Socket ( remoteIpAddress , portToListen );
+        in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
+        out = new PrintWriter( socket.getOutputStream() );
+		localMetaDataHashMap = new HashMap<String , String>();
+
+//		localMetaDataHashMap.put( "pubKey" , dataBaseManager.getPubKeyFromDatabase());
+//		localMetaDataHashMap.put( "UUID" , dataBaseManager.getPubKeyFromDatabase());
+//		localMetaDataHashMap.put( "ipv4" , dataBaseManager.getPubKeyFromDatabase());
+		
+		// temporary data
+		localMetaDataHashMap.put( "publicKey" , "public key");
+		localMetaDataHashMap.put( "UUID" , "1");
+		localMetaDataHashMap.put( "ipv4" , "192.168.x.x");
+		
+        
+        try
+        {
+        	// initial message sent to listening socket
+        	// GREET should always be the first message sent
+    		out.println( messageOut );
+    		out.flush();
+    		
+            while ( !messageIn.contains("DEPART") || !messageIn.contains("INVALID") )
+            {
+            	if ( in.readLine() != null )
+            	{
+            		System.out.println( messageIn );
+            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn );
+            		messageOut = mallochiteMessageManager.generateResponse( clientMetaDataHashMap , localMetaDataHashMap);
+            	}
+            	
+            	if ( !messageOut.equals( "" ) )
+            	{
+            		out.println( messageOut );
+            		out.flush();
+            	}
+            	
+            	messageIn = in.readLine();
+            }
+        }
+        finally
+        {
+        	/*
+        	 *Totally self contained socket. After all data is sent, it will close itself. No need for a helper method 
+        	 */
+            System.out.println( "closing stuff" );
+    		socket.close();
+            in.close();
+            out.close();
+        }
+		
+	}
 
 	public void openSocketForChat(String ipAddressToConnect, String portToUseString) throws UnknownHostException, IOException
 	{
@@ -92,5 +160,7 @@ public class ConnectionManager extends Thread
         ChatManager chatManager = new ChatManager( socketForSendingData );
         chatManager.start();
 	}
+	
+
 
 }
