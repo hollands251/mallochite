@@ -66,11 +66,8 @@ public abstract class Node extends Thread
         try 
         {
         	Scanner scanner = new Scanner ( System.in );
-        	Socket socketForListening = this.serverSocket.accept();
-        	this.connectionManager = new ConnectionManager( socketForListening );
-            this.connectionManager.start();
-           
     		boolean makeConnection = true;
+    		
     		while ( makeConnection )
     		{
         		System.out.println( "Make Connection? [Y/n]" );
@@ -92,6 +89,10 @@ public abstract class Node extends Thread
             		this.connectionManager.socketForFirstContact( remoteIpAddress, portToListen );
         		}
     		}
+    		
+        	Socket socketForListening = this.serverSocket.accept();
+        	this.connectionManager = new ConnectionManager( socketForListening );
+            this.connectionManager.start();
         }
         
         catch ( IOException ex ) { ex.printStackTrace(); }

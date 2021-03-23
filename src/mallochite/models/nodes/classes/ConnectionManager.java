@@ -33,39 +33,36 @@ public class ConnectionManager extends Thread
         try
         {
             System.out.println( "Received a connection" );
-            String receivedMessage = in.readLine();
+            String messageIn = "";
+            String messageOut = "";
+            HashMap<String , String> localMetaDataHashMap = new HashMap<String , String>();
+
+//    		localMetaDataHashMap.put( "pubKey" , dataBaseManager.getPubKeyFromDatabase());
+//    		localMetaDataHashMap.put( "UUID" , dataBaseManager.getPubKeyFromDatabase());
+//    		localMetaDataHashMap.put( "ipv4" , dataBaseManager.getPubKeyFromDatabase());
+    		
+    		// temporary data
+    		localMetaDataHashMap.put( "publicKey" , "public key");
+    		localMetaDataHashMap.put( "UUID" , "1");
+    		localMetaDataHashMap.put( "ipv4" , "192.168.x.x");
             
-            while ( receivedMessage != null && !receivedMessage.equals( "end" ) )
+            while ( messageIn != null )
             {	
-            	this.messageSegment = mallochiteMessageManager.parseHeader( receivedMessage );
+            	messageIn = in.readLine();
             	
-				if ( this.messageSegment != null )
-            	{        		
-            		this.out.println( messageSegment.get( "method" ) );
-            		this.out.println( messageSegment.get( "UUID" ) );
-            		this.out.println( messageSegment.get( "ipv4" ) );
-            		this.out.println( messageSegment.get( "port" ) );
-            		this.out.flush();
-            		
-            		this.messageSegment = null;
-            		
-            		//this.openSocketForChat ( messageSegment.get( "IPv4" ) , messageSegment.get( "port" ) );
-            	} 
-				else
-				{
-            		this.out.println( "test" );
-            		this.out.flush();
-				}
-            	
-				if ( !receivedMessage.equals( "" ) )
+            	if ( messageIn != "" )
             	{
-            		System.out.println( receivedMessage );
-            		receivedMessage = "";
+            		System.out.println( messageIn );
+            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn );
+            		messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap);
             	}
             	
-            	receivedMessage = in.readLine(); // always listening to the socket
+            	if ( messageOut != "" )
+            	{
+            		out.println( messageOut );
+            		out.flush();
+            	}
             }
-
         }
         
         catch( Exception e ) { e.printStackTrace(); }
@@ -121,13 +118,13 @@ public class ConnectionManager extends Thread
     		out.println( messageOut );
     		out.flush();
     		
-            while ( !messageIn.contains("DEPART") || !messageIn.contains("INVALID") )
+            while ( messageIn != null )
             {
             	if ( in.readLine() != null )
             	{
             		System.out.println( messageIn );
             		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn );
-            		messageOut = mallochiteMessageManager.generateResponse( clientMetaDataHashMap , localMetaDataHashMap);
+            		messageOut = mallochiteMessageManager.generateResponseSocket( clientMetaDataHashMap , localMetaDataHashMap);
             	}
             	
             	if ( !messageOut.equals( "" ) )

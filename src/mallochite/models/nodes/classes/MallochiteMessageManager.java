@@ -63,10 +63,38 @@ public class MallochiteMessageManager
     	return parsedMessageHashMap;
     }
     
-	public String generateResponse( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap )
+	public String generateResponseSocket( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap )
 	{
 		String method = clientMetaDataHashMap.get( "method" ); 
-		int port = Integer.parseInt( clientMetaDataHashMap.get( "port" ) );
+		String port = clientMetaDataHashMap.get( "port" );
+		
+		String publicKey = localMetaDataHashMap.get( "publicKey" );
+		String UUID = localMetaDataHashMap.get( "UUID" );
+		String ipv4 = localMetaDataHashMap.get( "ipv4" );
+		String response;	
+		
+		switch ( method )
+		{
+		case "GREET":
+			response = "AFFIRM:" + UUID + ":" + ipv4 + ":" + port;
+			break;
+		case "CONVERSE":
+			response = "OPEN";
+			break;
+		case "DEPART":
+			response = "DEPART:" + UUID + ":" + ipv4 + ":" + port;
+			break;
+		default:
+			response = "INVALID";
+			break;
+		}
+		return response;
+	}
+	
+	public String generateResponseServer( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap )
+	{
+		String method = clientMetaDataHashMap.get( "method" ); 
+		String port = clientMetaDataHashMap.get( "port" );
 		
 		String publicKey = localMetaDataHashMap.get( "publicKey" );
 		String UUID = localMetaDataHashMap.get( "UUID" );
@@ -80,9 +108,6 @@ public class MallochiteMessageManager
 			break;
 		case "AFFIRM":
 			response = "CONVERSE:" + UUID + ":" + ipv4 + ":" + port;
-			break;
-		case "CONVERSE":
-			response = "INVALID"; // this node should never recive a CONVERSE
 			break;
 		case "DEPART":
 			response = "DEPART:" + UUID + ":" + ipv4 + ":" + port;
