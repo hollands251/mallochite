@@ -49,11 +49,8 @@ public class ConnectionManager extends Thread
             		//this.openSocketForChat ( messageSegment.get( "IPv4" ) , messageSegment.get( "port" ) );
             	}
             	
-            	receivedMessage = in.readLine();
+            	receivedMessage = in.readLine(); // always listening to the socket
             }
-            
-            this.in.close();
-            this.metaSocket.close();
 
         }
         
@@ -62,12 +59,19 @@ public class ConnectionManager extends Thread
         finally
         {
         	System.out.println( "Connection closed" );
+            try
+			{
+				this.in.close();
+				this.metaSocket.close();
+			} 
+            catch (IOException e) { e.printStackTrace(); }
+            
             this.out.close();
             this.interrupt();
         }
     }
 
-	private void openSocketForChat(String ipAddressToConnect, String portToUseString) throws UnknownHostException, IOException
+	public void openSocketForChat(String ipAddressToConnect, String portToUseString) throws UnknownHostException, IOException
 	{
 		int portToUse = Integer.parseInt( portToUseString );
 		

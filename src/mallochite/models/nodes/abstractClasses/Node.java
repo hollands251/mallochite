@@ -10,9 +10,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import mallochite.models.exceptions.UninitializedSocket;
@@ -72,6 +74,61 @@ public abstract class Node extends Thread
 	}
 
 	
+	public void createSocketForSendingData() throws UnknownHostException, IOException
+	{
+		Scanner scanner = new Scanner ( System.in );
+	    BufferedReader in;
+	    PrintWriter out;
+		Socket socket;
+		
+		System.out.println( "enter IP address to connect to" );
+		String remoteIpAddress = scanner.nextLine();
+
+		System.out.println( "enter port to connect to" );
+		int portToListen = scanner.nextInt();
+		
+		socket = new Socket ( remoteIpAddress , portToListen );
+        in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
+        out = new PrintWriter( socket.getOutputStream() );
+        
+        //for ( int i = 0 ; i < 100000 ; i++ )  { } // waits for thread. Very bad practice, for debugging only
+        
+    	System.out.println( "what do say?" );
+    	String messageOut = scanner.nextLine();
+    	out.println( messageOut );
+    	out.flush();
+    	
+    	String messageIn = "";
+    	
+    	while ( messageIn.equals(""))
+    	{
+    		messageIn = in.readLine();
+    	}
+		
+        //String messageIn = in.readLine();
+        messageOut = "";
+        
+//        while ( !messageOut.equals("end") )
+//        {
+//
+//        	
+////        	if ( !messageIn.equals( "" ) )
+////        	{
+////        		System.out.println(messageIn);
+////        		messageIn = "";
+////        	}
+////        	
+////        	messageIn = in.readLine();
+//        		
+//        }
+        
+        System.out.println( "closing stuff" );
+		socket.close();
+        in.close();
+        out.close();
+		
+	}
+
 	public String getHostIpAddress()
 	{
 		return hostIpAddress;
