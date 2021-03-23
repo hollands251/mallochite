@@ -32,13 +32,15 @@ public class ConnectionManager extends Thread
         {
             System.out.println( "Received a connection" );
             MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
+            System.out.println( "running before in.readline" );
             String receivedMessage = in.readLine();
+            System.out.println( "running after in.readline" );
             
             while ( receivedMessage != null && !receivedMessage.equals( "end" ) )
             {	
             	this.messageSegment = mallochiteMessageManager.reactToMessage( receivedMessage );
             	
-            	if ( this.messageSegment != null )
+				if ( this.messageSegment != null )
             	{
             		System.out.println( receivedMessage );
             		this.out.println( messageSegment.get( "Method" ) );
@@ -46,7 +48,19 @@ public class ConnectionManager extends Thread
             		this.out.println( messageSegment.get( "Port" ) );
             		this.out.flush();
             		this.messageSegment = null;
+            		
             		//this.openSocketForChat ( messageSegment.get( "IPv4" ) , messageSegment.get( "port" ) );
+            	} 
+				else
+				{
+            		this.out.println( "test" );
+            		this.out.flush();
+				}
+            	
+				if ( !receivedMessage.equals( "" ) )
+            	{
+            		System.out.println( receivedMessage );
+            		receivedMessage = "";
             	}
             	
             	receivedMessage = in.readLine(); // always listening to the socket
