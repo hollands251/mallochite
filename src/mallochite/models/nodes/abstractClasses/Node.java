@@ -65,6 +65,10 @@ public abstract class Node extends Thread
 	{
         try 
         {
+        	Socket socketForListening = this.serverSocket.accept();
+            this.connectionManager.start();
+        	this.connectionManager = new ConnectionManager( socketForListening );
+        	
         	Scanner scanner = new Scanner ( System.in );
     		boolean makeConnection = true;
     		
@@ -88,11 +92,7 @@ public abstract class Node extends Thread
             		
             		this.connectionManager.socketForFirstContact( remoteIpAddress, portToListen );
         		}
-    		}
-    		
-        	Socket socketForListening = this.serverSocket.accept();
-        	this.connectionManager = new ConnectionManager( socketForListening );
-            this.connectionManager.start();
+    		}    		
         }
         
         catch ( IOException ex ) { ex.printStackTrace(); }

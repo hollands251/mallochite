@@ -120,7 +120,9 @@ public class ConnectionManager extends Thread
     		
             while ( messageIn != null )
             {
-            	if ( in.readLine() != null )
+            	messageIn = in.readLine(); 
+            	
+            	if ( messageIn != "" )
             	{
             		System.out.println( messageIn );
             		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn );
@@ -133,7 +135,10 @@ public class ConnectionManager extends Thread
             		out.flush();
             	}
             	
-            	messageIn = in.readLine();
+            	if ( messageOut.equals( "OPEN" ) )
+            	{
+            		break;
+            	}
             }
         }
         finally
