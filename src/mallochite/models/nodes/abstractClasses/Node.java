@@ -66,8 +66,8 @@ public abstract class Node extends Thread
         try 
         {
         	Socket socketForListening = this.serverSocket.accept();
-            this.connectionManager.start();
         	this.connectionManager = new ConnectionManager( socketForListening );
+            this.connectionManager.start();
         	
         	Scanner scanner = new Scanner ( System.in );
     		boolean makeConnection = true;

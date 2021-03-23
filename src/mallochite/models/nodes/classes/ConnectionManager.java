@@ -57,6 +57,11 @@ public class ConnectionManager extends Thread
             		messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap);
             	}
             	
+            	if ( messageIn == null || messageIn.equals( "OPEN" ) )
+            	{
+            		break;
+            	}
+            	
             	if ( messageOut != "" )
             	{
             		out.println( messageOut );

@@ -22,8 +22,8 @@ public class Mallochite
 
 		try
 		{
-			subNode1 = new SubNode( "192.168.2.19" );
-			subNode1.startListeningOnPort( 33373 );
+			subNode1 = new SubNode( "192.168.2.53" );
+			subNode1.startListeningOnPort( 33333 );
 //			subNode1.createSocketForSendingData();
 		
 			while ( subNode1.isListening() ) { }
