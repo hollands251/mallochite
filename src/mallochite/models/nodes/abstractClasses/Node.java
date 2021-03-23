@@ -92,40 +92,42 @@ public abstract class Node extends Thread
         out = new PrintWriter( socket.getOutputStream() );
         
         //for ( int i = 0 ; i < 100000 ; i++ )  { } // waits for thread. Very bad practice, for debugging only
-        
-    	System.out.println( "what do say?" );
-    	String messageOut = scanner.nextLine();
-    	out.println( messageOut );
-    	out.flush();
-    	
+
+    	String messageOut = "";
     	String messageIn = "";
-    	
-    	while ( messageIn.equals(""))
-    	{
-    		messageIn = in.readLine();
-    	}
-		
-        //String messageIn = in.readLine();
-        messageOut = "";
         
-//        while ( !messageOut.equals("end") )
-//        {
-//
-//        	
-////        	if ( !messageIn.equals( "" ) )
-////        	{
-////        		System.out.println(messageIn);
-////        		messageIn = "";
-////        	}
-////        	
-////        	messageIn = in.readLine();
-//        		
-//        }
-        
-        System.out.println( "closing stuff" );
-		socket.close();
-        in.close();
-        out.close();
+        try
+        {
+        	// initial message sent to listening socket
+    		out.println( "HELLO" );
+    		out.flush();
+    		
+            while ( !messageOut.equals("end") )
+            {
+            	if ( !messageIn.equals( "" ) )
+            	{
+            		System.out.println(messageIn);
+            		messageIn = "";
+            	}
+            	
+            	if ( !messageOut.equals( "" ) )
+            	{
+            		out.println( messageOut );
+            		out.flush();
+            	}
+
+            	messageOut = scanner.nextLine();
+            	
+            	System.out.println( in.readLine() );
+            }
+        }
+        finally
+        {
+            System.out.println( "closing stuff" );
+    		socket.close();
+            in.close();
+            out.close();
+        }
 		
 	}
 
