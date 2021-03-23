@@ -91,30 +91,36 @@ public abstract class Node extends Thread
         in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
         out = new PrintWriter( socket.getOutputStream() );
         
-        for ( int i = 0 ; i < 100000 ; i++ )  { } // waits for thread. Very bad practice, for debugging only
+        //for ( int i = 0 ; i < 100000 ; i++ )  { } // waits for thread. Very bad practice, for debugging only
         
     	System.out.println( "what do say?" );
     	String messageOut = scanner.nextLine();
     	out.println( messageOut );
     	out.flush();
+    	
+    	String messageIn = "";
+    	
+    	while ( messageIn.equals(""))
+    	{
+    		messageIn = in.readLine();
+    	}
 		
-        String messageIn = in.readLine();
+        //String messageIn = in.readLine();
         messageOut = "";
         
-        while ( !messageOut.equals("end") )
-        {
-        	out.println( messageOut );
-        	out.flush();
-        	
-        	if ( !messageIn.equals( "" ) )
-        	{
-        		System.out.println(messageIn);
-        		messageIn = "";
-        	}
-        	
-        	messageIn = in.readLine();
-        		
-        }
+//        while ( !messageOut.equals("end") )
+//        {
+//
+//        	
+////        	if ( !messageIn.equals( "" ) )
+////        	{
+////        		System.out.println(messageIn);
+////        		messageIn = "";
+////        	}
+////        	
+////        	messageIn = in.readLine();
+//        		
+//        }
         
         System.out.println( "closing stuff" );
 		socket.close();
