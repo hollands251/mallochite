@@ -18,12 +18,12 @@ public class Mallochite
 //		System.out.println( "enter your IP address" );
 //		String localIpAddress = scanner.nextLine();
 //
-		System.out.println( "enter port to listen on" );
-		int portToListen = scanner.nextInt();
+//		System.out.println( "enter port to listen on" );
+//		int portToListen = scanner.nextInt();
 
 		try
 		{
-			subNode1 = new SubNode( "192.168.2.52" );
+			subNode1 = new SubNode( "192.168.2.19" );
 			//subNode1.startListeningOnPort( portToListen );
 			subNode1.createSocketForSendingData();
 		
