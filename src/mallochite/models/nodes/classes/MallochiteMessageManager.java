@@ -5,54 +5,197 @@ import java.util.HashMap;
 
 public class MallochiteMessageManager
 {
-	private String deliminators = " "; // change to new line
-	private final int HELLO_PARSE_COUNT = 5;
+	private String deliminators = ":"; // change to new line
+	private final int GREET_PARSE_COUNT = 2;
+	private final int CONVERSE_PARSE_COUNT = 4;
+	private final int AFFIRM_PARSE_COUNT = 4;
+	private final int DEPART_PARSE_COUNT = 4;
+	
 	
     public MallochiteMessageManager () {};
     
     
-    /*
-     * Takes message from node that is connecting. If it is encrypted, there will be a ENCRYPTED
-     * string prepended to it to let us know to decrypt it.
-     * 
+    /* 
      * After decrypting the metadata of the message is parsed, stored in a hashmap and returned to be
      * used by the connection Negotiator 
      */
-    public HashMap<String , String> reactToMessage ( String message )
+    public HashMap<String , String> parseHeader( String message )
     {
     	
-    	HashMap messageSegment = null;
+    	HashMap messageSegment;
     
-    	if ( message.equals( "ENCRYPTED" ) )
+    	if ( message.contains( "GREET" ) ) // TODO must make regex to ensure start of line
     	{
-    		//message = encryptionManager.decrypt()
+    		messageSegment = this.parseDataFromHeader( message );
     	}
-    	else if ( message.contains( "HELLO" ) ) // TODO must make regex to ensure start of line
+    	else
     	{
-    		messageSegment = this.parseHelloHeader( message );
+    		// TODO decrypt message as GREETINGS is the only one allowed not to be encrypted
+    		messageSegment = this.parseDataFromHeader( message );
     	}
     	
     	return messageSegment;
     }
     
-    public HashMap<String , String> parseHelloHeader( String message )
+    public HashMap<String , String> parseDataFromHeader( String message )
     {
     	String[] parsedMessage = message.split( this.deliminators );
-    	HashMap<String , String > helloMessageHashMap = new HashMap<String , String>();
+    	HashMap<String , String > parsedMessageHashMap = new HashMap<String , String>();
     	
-    	if ( parsedMessage.length >= HELLO_PARSE_COUNT )
+    	switch ( parsedMessage[0] )
     	{
-        	helloMessageHashMap.put( "Method", parsedMessage[0] );
-        	helloMessageHashMap.put( "UUID", parsedMessage[1] );
-        	helloMessageHashMap.put( "IPv4", parsedMessage[2] );
-        	helloMessageHashMap.put( "Port", parsedMessage[3] );
-        	helloMessageHashMap.put( "Key",  parsedMessage[4] );
+	    	case "GREET":
+	    		parsedMessageHashMap = parseGreet( parsedMessage );
+	    		break;
+	    	case "CONVERSE":
+	    		parsedMessageHashMap = parseConverse( parsedMessage );
+	    		break;
+	    	case "AFFIRM":
+	    		parsedMessageHashMap = parseAffirm( parsedMessage );
+	    		break;
+	    	case "DEPART":
+	    		parsedMessageHashMap = parseDepart( parsedMessage );
+	    		break;
+	    	default:
+	    		parsedMessageHashMap.put( "method", "INVALID" );
+    	}
+    	
+    	return parsedMessageHashMap;
+    }
+    
+	public String generateResponseSocket( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap )
+	{
+		String method = clientMetaDataHashMap.get( "method" ); 
+		String port = clientMetaDataHashMap.get( "port" );
+		
+		String publicKey = localMetaDataHashMap.get( "publicKey" );
+		String UUID = localMetaDataHashMap.get( "UUID" );
+		String ipv4 = localMetaDataHashMap.get( "ipv4" );
+		String response;	
+		
+		switch ( method )
+		{
+		case "GREET":
+			response = "AFFIRM:" + UUID + ":" + ipv4 + ":" + port;
+			break;
+		case "CONVERSE":
+			response = "OPEN";
+			break;
+		case "DEPART":
+			response = "DEPART:" + UUID + ":" + ipv4 + ":" + port;
+			break;
+		default:
+			response = "INVALID";
+			break;
+		}
+		return response;
+	}
+	
+	public String generateResponseServer( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap )
+	{
+		String method = clientMetaDataHashMap.get( "method" ); 
+		String port = clientMetaDataHashMap.get( "port" );
+		
+		String publicKey = localMetaDataHashMap.get( "publicKey" );
+		String UUID = localMetaDataHashMap.get( "UUID" );
+		String ipv4 = localMetaDataHashMap.get( "ipv4" );
+		String response;	
+		
+		switch ( method )
+		{
+		case "GREET":
+			response = "GREET:" + publicKey;
+			break;
+		case "AFFIRM":
+			response = "CONVERSE:" + UUID + ":" + ipv4 + ":" + port;
+			break;
+		case "DEPART":
+			response = "DEPART:" + UUID + ":" + ipv4 + ":" + port;
+			break;
+		default:
+			response = "INVALID";
+			break;
+		}
+		return response;
+	}
+    
+    /*
+     * The following private methods are helper methods. 
+     * They take the array of strings from it's caller and ensures it has the correct amount of parameters
+     * for their respective header. It then places the associative values in a hashmap to be returned
+     */
+    private HashMap<String , String> parseGreet( String[] parsedMessage )
+    {
+    	HashMap<String , String> parsedMessageHashMap = new HashMap<String , String>();
+    	
+    	if ( parsedMessage.length >= GREET_PARSE_COUNT )
+    	{
+    		parsedMessageHashMap.put( "method", parsedMessage[0] );
+    		parsedMessageHashMap.put( "pubkey", parsedMessage[1] );
     	}
     	else
     	{
-        	helloMessageHashMap.put( "Method", "INVALID");
+    		parsedMessageHashMap.put( "method", "INVALID");
     	}
     	
-    	return helloMessageHashMap;
+    	return parsedMessageHashMap;
     }
+    
+    private HashMap<String , String> parseConverse( String[] parsedMessage )
+    {
+    	HashMap<String , String> parsedMessageHashMap = new HashMap<String , String>();
+    	
+    	if ( parsedMessage.length >= CONVERSE_PARSE_COUNT )
+    	{
+    		parsedMessageHashMap.put( "method", parsedMessage[0] );
+    		parsedMessageHashMap.put( "UUID", parsedMessage[1] );
+    		parsedMessageHashMap.put( "ipv4", parsedMessage[2] );
+    		parsedMessageHashMap.put( "port", parsedMessage[3] );
+    	}
+    	else
+    	{
+    		parsedMessageHashMap.put( "method", "INVALID");
+    	}
+    	
+    	return parsedMessageHashMap;
+    }
+    
+    private HashMap<String , String> parseAffirm( String[] parsedMessage )
+    {
+    	HashMap<String , String> parsedMessageHashMap = new HashMap<String , String>();
+    	
+    	if ( parsedMessage.length >= AFFIRM_PARSE_COUNT )
+    	{
+    		parsedMessageHashMap.put( "method", parsedMessage[0] );
+    		parsedMessageHashMap.put( "UUID", parsedMessage[1] );
+    		parsedMessageHashMap.put( "ipv4", parsedMessage[2] );
+    		parsedMessageHashMap.put( "port", parsedMessage[3] );
+    	}
+    	else
+    	{
+    		parsedMessageHashMap.put( "method", "INVALID");
+    	}
+    	
+    	return parsedMessageHashMap;
+    }
+    
+    private HashMap<String , String> parseDepart( String[] parsedMessage )
+    {
+    	HashMap<String , String> parsedMessageHashMap = new HashMap<String , String>();
+    	
+    	if ( parsedMessage.length >= DEPART_PARSE_COUNT )
+    	{
+    		parsedMessageHashMap.put( "method", parsedMessage[0] );
+    		parsedMessageHashMap.put( "UUID", parsedMessage[1] );
+    		parsedMessageHashMap.put( "ipv4", parsedMessage[2] );
+    		parsedMessageHashMap.put( "port", parsedMessage[3] );
+    	}
+    	else
+    	{
+    		parsedMessageHashMap.put( "method", "INVALID");
+    	}
+    	
+    	return parsedMessageHashMap;
+    }
+    
 }

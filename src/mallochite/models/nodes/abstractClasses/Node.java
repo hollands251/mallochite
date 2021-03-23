@@ -65,70 +65,37 @@ public abstract class Node extends Thread
 	{
         try 
         {
+        	Scanner scanner = new Scanner ( System.in );
+    		boolean makeConnection = true;
+    		
+    		while ( makeConnection )
+    		{
+        		System.out.println( "Make Connection? [Y/n]" );
+        		String response = scanner.nextLine();
+        		
+        		if ( response.equals( "n" ) ) 
+        		{
+        			makeConnection = false;
+        			break;
+        		}
+        		else
+        		{
+            		System.out.println( "enter IP address to connect to" );
+            		String remoteIpAddress = scanner.nextLine();
+
+            		System.out.println( "enter port to connect to" );
+            		int portToListen = scanner.nextInt();
+            		
+            		this.connectionManager.socketForFirstContact( remoteIpAddress, portToListen );
+        		}
+    		}
+    		
         	Socket socketForListening = this.serverSocket.accept();
         	this.connectionManager = new ConnectionManager( socketForListening );
             this.connectionManager.start();
         }
         
         catch ( IOException ex ) { ex.printStackTrace(); }
-	}
-
-	
-	public void createSocketForSendingData() throws UnknownHostException, IOException
-	{
-		Scanner scanner = new Scanner ( System.in );
-	    BufferedReader in;
-	    PrintWriter out;
-		Socket socket;
-		
-		System.out.println( "enter IP address to connect to" );
-		String remoteIpAddress = scanner.nextLine();
-
-		System.out.println( "enter port to connect to" );
-		int portToListen = scanner.nextInt();
-		
-		socket = new Socket ( remoteIpAddress , portToListen );
-        in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
-        out = new PrintWriter( socket.getOutputStream() );
-        
-        //for ( int i = 0 ; i < 100000 ; i++ )  { } // waits for thread. Very bad practice, for debugging only
-
-    	String messageOut = "";
-    	String messageIn = "";
-        
-        try
-        {
-        	// initial message sent to listening socket
-    		out.println( "HELLO" );
-    		out.flush();
-    		
-            while ( !messageOut.equals("end") )
-            {
-            	if ( !messageIn.equals( "" ) )
-            	{
-            		System.out.println(messageIn);
-            		messageIn = "";
-            	}
-            	
-            	if ( !messageOut.equals( "" ) )
-            	{
-            		out.println( messageOut );
-            		out.flush();
-            	}
-
-            	messageOut = scanner.nextLine();
-            	
-            	System.out.println( in.readLine() );
-            }
-        }
-        finally
-        {
-            System.out.println( "closing stuff" );
-    		socket.close();
-            in.close();
-            out.close();
-        }
-		
 	}
 
 	public String getHostIpAddress()

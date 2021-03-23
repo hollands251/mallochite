@@ -14,8 +14,10 @@ public class ConnectionManager extends Thread
     private Socket metaSocket;				// responsible for establishing connections, not for chat
     private HashMap<String , Socket> chatSockets;
     private HashMap<String , String> messageSegment;
+    //private DatabaseManager dbManager; // get from node???
     private BufferedReader in;
     private PrintWriter out;
+    MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
     
     
     public ConnectionManager( Socket socket ) throws IOException
@@ -31,41 +33,36 @@ public class ConnectionManager extends Thread
         try
         {
             System.out.println( "Received a connection" );
-            MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
-            System.out.println( "running before in.readline" );
-            String receivedMessage = in.readLine();
-            System.out.println( "running after in.readline" );
+            String messageIn = "";
+            String messageOut = "";
+            HashMap<String , String> localMetaDataHashMap = new HashMap<String , String>();
+
+//    		localMetaDataHashMap.put( "pubKey" , dataBaseManager.getPubKeyFromDatabase());
+//    		localMetaDataHashMap.put( "UUID" , dataBaseManager.getPubKeyFromDatabase());
+//    		localMetaDataHashMap.put( "ipv4" , dataBaseManager.getPubKeyFromDatabase());
+    		
+    		// temporary data
+    		localMetaDataHashMap.put( "publicKey" , "public key");
+    		localMetaDataHashMap.put( "UUID" , "1");
+    		localMetaDataHashMap.put( "ipv4" , "192.168.x.x");
             
-            while ( receivedMessage != null && !receivedMessage.equals( "end" ) )
+            while ( messageIn != null )
             {	
-            	this.messageSegment = mallochiteMessageManager.reactToMessage( receivedMessage );
+            	messageIn = in.readLine();
             	
-				if ( this.messageSegment != null )
+            	if ( messageIn != "" )
             	{
-            		System.out.println( receivedMessage );
-            		this.out.println( messageSegment.get( "Method" ) );
-            		this.out.println( messageSegment.get( "IPv4" ) );
-            		this.out.println( messageSegment.get( "Port" ) );
-            		this.out.flush();
-            		this.messageSegment = null;
-            		
-            		//this.openSocketForChat ( messageSegment.get( "IPv4" ) , messageSegment.get( "port" ) );
-            	} 
-				else
-				{
-            		this.out.println( "test" );
-            		this.out.flush();
-				}
-            	
-				if ( !receivedMessage.equals( "" ) )
-            	{
-            		System.out.println( receivedMessage );
-            		receivedMessage = "";
+            		System.out.println( messageIn );
+            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn );
+            		messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap);
             	}
             	
-            	receivedMessage = in.readLine(); // always listening to the socket
+            	if ( messageOut != "" )
+            	{
+            		out.println( messageOut );
+            		out.flush();
+            	}
             }
-
         }
         
         catch( Exception e ) { e.printStackTrace(); }
@@ -84,6 +81,73 @@ public class ConnectionManager extends Thread
             this.interrupt();
         }
     }
+    
+    /*
+     * Creates a socket with the intent of sending a "GREET" header with public key
+     * Waits for response from socket and reacts accordingly 
+     */
+	public void socketForFirstContact( String remoteIpAddress , int portToListen ) throws UnknownHostException, IOException
+	{
+
+		Socket socket;
+	    BufferedReader in;
+	    PrintWriter out;
+		HashMap<String , String> localMetaDataHashMap;
+        String messageIn = "";
+        String messageOut = "GREET:pubkey";
+			
+        socket = new Socket ( remoteIpAddress , portToListen );
+        in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
+        out = new PrintWriter( socket.getOutputStream() );
+		localMetaDataHashMap = new HashMap<String , String>();
+
+//		localMetaDataHashMap.put( "pubKey" , dataBaseManager.getPubKeyFromDatabase());
+//		localMetaDataHashMap.put( "UUID" , dataBaseManager.getPubKeyFromDatabase());
+//		localMetaDataHashMap.put( "ipv4" , dataBaseManager.getPubKeyFromDatabase());
+		
+		// temporary data
+		localMetaDataHashMap.put( "publicKey" , "public key");
+		localMetaDataHashMap.put( "UUID" , "1");
+		localMetaDataHashMap.put( "ipv4" , "192.168.x.x");
+		
+        
+        try
+        {
+        	// initial message sent to listening socket
+        	// GREET should always be the first message sent
+    		out.println( messageOut );
+    		out.flush();
+    		
+            while ( messageIn != null )
+            {
+            	if ( in.readLine() != null )
+            	{
+            		System.out.println( messageIn );
+            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn );
+            		messageOut = mallochiteMessageManager.generateResponseSocket( clientMetaDataHashMap , localMetaDataHashMap);
+            	}
+            	
+            	if ( !messageOut.equals( "" ) )
+            	{
+            		out.println( messageOut );
+            		out.flush();
+            	}
+            	
+            	messageIn = in.readLine();
+            }
+        }
+        finally
+        {
+        	/*
+        	 *Totally self contained socket. After all data is sent, it will close itself. No need for a helper method 
+        	 */
+            System.out.println( "closing stuff" );
+    		socket.close();
+            in.close();
+            out.close();
+        }
+		
+	}
 
 	public void openSocketForChat(String ipAddressToConnect, String portToUseString) throws UnknownHostException, IOException
 	{
@@ -93,7 +157,7 @@ public class ConnectionManager extends Thread
         ChatManager chatManager = new ChatManager( socketForSendingData );
         chatManager.start();
 	}
-    
-    
+	
+
 
 }

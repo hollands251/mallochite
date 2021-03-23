@@ -13,7 +13,6 @@ public class Mallochite
 		
 		Scanner scanner = new Scanner( System.in );
 		SubNode subNode1 = null;
-		SubNode subNode2 = null;
 		
 //		System.out.println( "enter your IP address" );
 //		String localIpAddress = scanner.nextLine();
