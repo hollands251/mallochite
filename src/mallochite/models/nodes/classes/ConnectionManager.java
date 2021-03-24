@@ -53,6 +53,9 @@ public class ConnectionManager extends Thread
             	if ( messageIn != "" )
             	{
             		System.out.println( messageIn );
+            		
+            		// decrypt 
+            		
             		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn );
             		messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap);
             	}
@@ -64,6 +67,7 @@ public class ConnectionManager extends Thread
             	
             	if ( messageOut != "" )
             	{
+            		// encrypt 
             		out.println( messageOut );
             		out.flush();
             	}
@@ -130,12 +134,14 @@ public class ConnectionManager extends Thread
             	if ( messageIn != "" )
             	{
             		System.out.println( messageIn );
+            		// decrypt messageIn
             		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn );
             		messageOut = mallochiteMessageManager.generateResponseSocket( clientMetaDataHashMap , localMetaDataHashMap);
             	}
             	
             	if ( !messageOut.equals( "" ) )
             	{
+            		// encrypt meessageOut
             		out.println( messageOut );
             		out.flush();
             	}
