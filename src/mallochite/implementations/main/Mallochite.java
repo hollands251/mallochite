@@ -14,7 +14,6 @@ public class Mallochite
 		
 		Scanner scanner = new Scanner( System.in );
 		SubNode subNode1 = null;
-		boolean makeConnection = true;
 		
 //		System.out.println( "enter your IP address" );
 //		String localIpAddress = scanner.nextLine();
@@ -25,16 +24,15 @@ public class Mallochite
 		try
 		{
 			subNode1 = new SubNode( "192.168.2.58" );
-			subNode1.startListeningOnPort( 32323 );
+			subNode1.startListeningOnPort( 23242 );
 			
-			while ( makeConnection )
+			while ( true )
 			{
 	    		System.out.println( "Make Connection? [Y/n]" );
 	    		String response = scanner.nextLine();
 	    		
 	    		if ( response.equals( "n" ) ) 
 	    		{
-	    			makeConnection = false;
 	    			break;
 	    		}
 	    		else
@@ -48,9 +46,7 @@ public class Mallochite
 	        		subNode1.makeConnection( remoteIpAddress , portToListen );
 	    		}
 			}   
-//			subNode1.createSocketForSendingData();
-		
-			while ( subNode1.isListening() ) { }
+
 		}
 		finally
 		{
