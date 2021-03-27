@@ -12,13 +12,18 @@ import java.util.HashMap;
 public class ConnectionManager extends Thread
 {
     private Socket metaSocket;				// responsible for establishing connections, not for chat
-    private HashMap<String , Socket> chatSockets;
+
+	private HashMap<String , Socket> chatSockets;
     private HashMap<String , String> messageSegment;
     //private DatabaseManager dbManager; // get from node???
     private BufferedReader in;
     private PrintWriter out;
     MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
     
+    public ConnectionManager()
+    {
+    	
+    }
     
     public ConnectionManager( Socket socket ) throws IOException
     {
@@ -148,7 +153,7 @@ public class ConnectionManager extends Thread
             	
             	if ( messageOut.equals( "OPEN" ) )
             	{
-            		break;
+            		continue;
             	}
             }
         }
@@ -164,6 +169,7 @@ public class ConnectionManager extends Thread
         }
 		
 	}
+	
 
 	public void openSocketForChat(String ipAddressToConnect, String portToUseString) throws UnknownHostException, IOException
 	{
@@ -174,6 +180,16 @@ public class ConnectionManager extends Thread
         chatManager.start();
 	}
 	
+    public Socket getMetaSocket()
+	{
+		return metaSocket;
+	}
 
+	public void setMetaSocket(Socket metaSocket) throws IOException
+	{
+		this.metaSocket = metaSocket;
+        this.in = new BufferedReader( new InputStreamReader( metaSocket.getInputStream() ) );
+        this.out = new PrintWriter( metaSocket.getOutputStream() );
+	}
 
 }
