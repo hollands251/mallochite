@@ -55,6 +55,22 @@ public abstract class Node extends Thread
         
         catch ( IOException ex ) { ex.printStackTrace(); }
     }
+    
+    public void makeConnection(String remoteIpAddress , int portToListen )
+    {
+		try
+		{
+			this.connectionManager.socketForFirstContact( remoteIpAddress, portToListen );
+		} catch (UnknownHostException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+    }
 	
 	/* runs methods on a separate thread 
 	 * 
@@ -67,32 +83,7 @@ public abstract class Node extends Thread
         {
         	Socket socketForListening = this.serverSocket.accept();
         	this.connectionManager = new ConnectionManager( socketForListening );
-            this.connectionManager.start();
-        	
-        	Scanner scanner = new Scanner ( System.in );
-    		boolean makeConnection = true;
-    		
-    		while ( makeConnection )
-    		{
-        		System.out.println( "Make Connection? [Y/n]" );
-        		String response = scanner.nextLine();
-        		
-        		if ( response.equals( "n" ) ) 
-        		{
-        			makeConnection = false;
-        			break;
-        		}
-        		else
-        		{
-            		System.out.println( "enter IP address to connect to" );
-            		String remoteIpAddress = scanner.nextLine();
-
-            		System.out.println( "enter port to connect to" );
-            		int portToListen = scanner.nextInt();
-            		
-            		this.connectionManager.socketForFirstContact( remoteIpAddress, portToListen );
-        		}
-    		}    		
+            this.connectionManager.start();		
         }
         
         catch ( IOException ex ) { ex.printStackTrace(); }
