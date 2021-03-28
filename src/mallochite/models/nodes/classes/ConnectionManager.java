@@ -64,13 +64,14 @@ public class ConnectionManager extends Thread
             	{
             		System.out.println( messageIn );
             		
-            		// decrypt 
+            	
             		
             		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn, pk );
             		messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap, keyPair);
             		
             		
             		if(!messageIn.contains("GREET")) {
+            			//DECRYPTION HERE!!!!!!!!!!!!!!!!!
             		message= RSAEncryption.decrypt(keyPair.getPrivate(), messageOut);
             		}
             		else if (messageIn.contains("GREET")) {
