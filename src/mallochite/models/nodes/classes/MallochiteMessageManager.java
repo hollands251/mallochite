@@ -130,7 +130,7 @@ public class MallochiteMessageManager
 			response = RSAEncryption.encrypt(publicKey,"DEPART: " + UUID + ":" + ipv4 + ":" + port );
 			break;
     	case "OPEN":
-    		response = "OPEN";
+    		response = "OPEN".getBytes();
     		break;
 		default:
 			response = RSAEncryption.encrypt(publicKey, "INVALID");
