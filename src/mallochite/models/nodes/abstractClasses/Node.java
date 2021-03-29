@@ -23,15 +23,16 @@ import mallochite.models.nodes.classes.*;
 public abstract class Node extends Thread
 {
 	private String hostIpAddress;
+	private int portNumberToUse;
     private ServerSocket serverSocket;
-    private ConnectionManager connectionManager;
+	private ConnectionManager connectionManager;
     private boolean listening;
     
     public Node ( String hostIpAddress )
     {
     	this.connectionManager = new ConnectionManager();
     	this.hostIpAddress = hostIpAddress;
-    	this.listening = false;
+    	this.listening = true;
     }
 	
     public void startListeningOnPort ( int portNumberToUse ) throws IOException
@@ -39,8 +40,8 @@ public abstract class Node extends Thread
         try
         {
             this.serverSocket = new ServerSocket( portNumberToUse );
-            this.listening = true;
-            this.start();    
+            this.portNumberToUse = portNumberToUse;
+            this.listening = true;  
         }
         
         catch ( IOException ex ) { ex.printStackTrace(); }
@@ -52,15 +53,11 @@ public abstract class Node extends Thread
         try
         {
         	System.out.println("closing server socket");
-            this.listening = false;
-            this.interrupt();
             this.serverSocket.close();
         }
         catch ( SocketException ex ) { throw ex; }
         finally
         {
-            this.listening = false;
-            this.interrupt();
             this.serverSocket.close();
         }
 	}
@@ -90,12 +87,28 @@ public abstract class Node extends Thread
 	{
         try 
         {
-        	Socket socketForListening = this.serverSocket.accept();
-        	this.connectionManager.setMetaSocket( socketForListening );
-            this.connectionManager.start();		
+        	while ( this.listening )
+        	{
+        		if ( this.serverSocket != null )
+        		{
+                	Socket socketForListening = this.serverSocket.accept();
+                	
+                	if ( !this.connectionManager.isAlive() )
+                	{
+                		this.connectionManager = new ConnectionManager();
+                		this.connectionManager.setMetaSocket( socketForListening );
+                		this.connectionManager.start();
+                	}
+        		}
+        	}
         }
         
-        catch ( IOException ex ) { ex.printStackTrace(); }
+        catch ( IOException ex ) { }
+        
+        finally 
+        { 
+        	this.interrupt(); 
+        }
 	}
 
 	public String getHostIpAddress()
@@ -116,5 +129,15 @@ public abstract class Node extends Thread
 	public void setListening(boolean listening)
 	{
 		this.listening = listening;
+	}
+	
+    public ServerSocket getServerSocket()
+	{
+		return serverSocket;
+	}
+
+	public void setServerSocket(ServerSocket serverSocket)
+	{
+		this.serverSocket = serverSocket;
 	}
 }

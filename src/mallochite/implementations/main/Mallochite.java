@@ -24,10 +24,13 @@ public class Mallochite
 		try
 		{
 			subNode1 = new SubNode( "192.168.2.58" );
-			subNode1.startListeningOnPort( 23242 );
 			
-			while ( true )
+			while ( subNode1.isListening() )
 			{
+				
+				subNode1.startListeningOnPort( 23891 );
+				subNode1.start();
+				
 	    		System.out.println( "Make Connection? [Y/n]" );
 	    		String response = scanner.nextLine();
 	    		
@@ -50,7 +53,10 @@ public class Mallochite
 		}
 		finally
 		{
-			subNode1.closeServerSocket();
+			if ( subNode1.getServerSocket() != null )
+			{
+				subNode1.closeServerSocket();
+			}
 		}
         
 	}

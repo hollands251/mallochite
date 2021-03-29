@@ -55,7 +55,7 @@ public class ConnectionManager extends Thread
             {	
             	messageIn = in.readLine();
             	
-            	if ( messageIn != "" )
+            	if ( messageIn != null && messageIn != "" )
             	{
             		System.out.println( messageIn );
             		
