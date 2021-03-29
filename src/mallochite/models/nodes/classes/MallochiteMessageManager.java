@@ -107,7 +107,7 @@ public class MallochiteMessageManager
 		return response;
 	}
 	
-	public byte[] generateResponseServer( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap, KeyPair keyPair ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
+	public String generateResponseServer( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap, KeyPair keyPair ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
 	{
 		String method = clientMetaDataHashMap.get( "method" ); 
 		String port = clientMetaDataHashMap.get( "port" );
@@ -116,24 +116,24 @@ public class MallochiteMessageManager
 		Key publicKey = keyPair.getPublic();
 		String UUID = localMetaDataHashMap.get( "UUID" );
 		String ipv4 = localMetaDataHashMap.get( "ipv4" );
-		byte[] response;	
+		String response;	
 		
 		switch ( method )
 		{
 		case "GREET":
-			response = ("GREET: " + publicKey.toString()).getBytes() ;
+			response = "GREET: " + publicKey.toString() ;
 			break;
 		case "AFFIRM":
-			response = RSAEncryption.encrypt(publicKey,"CONVERSE: " + UUID + ":" + ipv4 + ":" + port );
+			response = RSAEncryption.encrypt(publicKey,"CONVERSE: " + UUID + ":" + ipv4 + ":" + port ).toString() ;
 			break;
 		case "DEPART":
-			response = RSAEncryption.encrypt(publicKey,"DEPART: " + UUID + ":" + ipv4 + ":" + port );
+			response = RSAEncryption.encrypt(publicKey,"DEPART: " + UUID + ":" + ipv4 + ":" + port ).toString();
 			break;
     	case "OPEN":
-    		response = "OPEN".getBytes();
+    		response = "OPEN";
     		break;
 		default:
-			response = RSAEncryption.encrypt(publicKey, "INVALID");
+			response = RSAEncryption.encrypt(publicKey, "INVALID").toString();
 			break;
 		}
 		return response;

@@ -35,7 +35,7 @@ public class Mallochite
 			while ( subNode1.isListening() )
 			{
 				
-				subNode1.startListeningOnPort( 23891 );
+				subNode1.startListeningOnPort( 23894 );
 				subNode1.start();
 				
 	    		System.out.println( "Make Connection? [Y/n]" );

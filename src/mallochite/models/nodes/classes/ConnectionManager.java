@@ -54,7 +54,7 @@ public class ConnectionManager extends Thread
         {
             System.out.println( "Received a connection" );
             String messageIn = "";
-            byte[] messageOut = null;
+            String messageOut = null;
             String message = ""; 
             HashMap<String , String> localMetaDataHashMap = new HashMap<String , String>();
 
@@ -69,11 +69,9 @@ public class ConnectionManager extends Thread
             
             while ( messageIn != null )
             {
-            	if ( messageIn != null && messageIn != "" )
+            	if ( messageIn != null && messageIn != "" ) // will sometimes throw error if null is not checked for 
             	{
             		System.out.println( messageIn );
-            		
-            	
             		
             		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn, pk );
             		messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap, keyPair);
@@ -81,15 +79,9 @@ public class ConnectionManager extends Thread
             		
             		if(!messageIn.contains("GREET")) {
             			//DECRYPTION HERE!!!!!!!!!!!!!!!!!
-            		message= RSAEncryption.decrypt(this.keyPair.getPrivate(), messageOut);
+            		message = RSAEncryption.decrypt( this.keyPair.getPrivate(), messageOut.getBytes() );
             		}
-            		else if (messageIn.contains("GREET")) {
-            			for(byte b: messageOut) {
-        					message = message + (char)b;
-        				}
-            		}
-            		
-            		
+            			
             	}
             	
             	if ( messageIn == null || messageIn.equals( "OPEN" ) )
@@ -103,6 +95,8 @@ public class ConnectionManager extends Thread
             		out.println(message);
             		out.flush();
             	}
+            	
+            	messageIn = in.readLine();
             }
         }
         
