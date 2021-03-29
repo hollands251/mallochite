@@ -3,7 +3,13 @@ package mallochite.implementations.main;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import mallochite.models.nodes.classes.*;
 
@@ -51,6 +57,26 @@ public class Mallochite
 	    		}
 			}   
       
+		} catch (InvalidKeyException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadPaddingException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		finally
 		{

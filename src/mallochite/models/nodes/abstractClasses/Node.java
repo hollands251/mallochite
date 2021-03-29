@@ -15,8 +15,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import mallochite.models.exceptions.UninitializedSocket;
 import mallochite.models.nodes.classes.*;
@@ -64,7 +70,7 @@ public abstract class Node extends Thread
         }
 	}
     
-    public void makeConnection(String remoteIpAddress , int portToListen )
+    public void makeConnection(String remoteIpAddress , int portToListen ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
     {
 		try
 		{

@@ -6,9 +6,15 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import mallochite.encryption.RSAEncryption;
 
@@ -20,6 +26,8 @@ public class ConnectionManager extends Thread
 
 	private HashMap<String , Socket> chatSockets;
     private HashMap<String , String> messageSegment;
+    private KeyPair keyPair;
+    private Key pk;
     //private DatabaseManager dbManager; // get from node???
     private BufferedReader in;
     private PrintWriter out;
@@ -30,11 +38,13 @@ public class ConnectionManager extends Thread
     	
     }
     
-    public ConnectionManager( Socket socket ) throws IOException
+    public ConnectionManager( Socket socket ) throws IOException, NoSuchAlgorithmException
     {
         this.metaSocket = socket;
         this.in = new BufferedReader( new InputStreamReader( metaSocket.getInputStream() ) );
         this.out = new PrintWriter( metaSocket.getOutputStream() );
+        this.keyPair = RSAEncryption.keyGenerator();
+        this.pk = this.keyPair.getPublic();
     }
 
     @Override
@@ -51,9 +61,6 @@ public class ConnectionManager extends Thread
 //    		localMetaDataHashMap.put( "pubKey" , dataBaseManager.getPubKeyFromDatabase());
 //    		localMetaDataHashMap.put( "UUID" , dataBaseManager.getPubKeyFromDatabase());
 //    		localMetaDataHashMap.put( "ipv4" , dataBaseManager.getPubKeyFromDatabase());
-            
-            KeyPair keyPair = RSAEncryption.keyGenerator();
-            Key pk = keyPair.getPublic();
     		
     		// temporary data
     		//localMetaDataHashMap.put( "publicKey" , pk.toString());
@@ -74,7 +81,7 @@ public class ConnectionManager extends Thread
             		
             		if(!messageIn.contains("GREET")) {
             			//DECRYPTION HERE!!!!!!!!!!!!!!!!!
-            		message= RSAEncryption.decrypt(keyPair.getPrivate(), messageOut);
+            		message= RSAEncryption.decrypt(this.keyPair.getPrivate(), messageOut);
             		}
             		else if (messageIn.contains("GREET")) {
             			for(byte b: messageOut) {
@@ -121,7 +128,7 @@ public class ConnectionManager extends Thread
      * Waits for response from socket and reacts accordingly 
      */
      
-	public void socketForFirstContact( String remoteIpAddress , int portToListen ) throws UnknownHostException, IOException
+	public void socketForFirstContact( String remoteIpAddress , int portToListen ) throws UnknownHostException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
 	{
 
 		Socket socket;
@@ -161,7 +168,7 @@ public class ConnectionManager extends Thread
             	{
             		System.out.println( messageIn );
             		// decrypt messageIn
-            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn, pk );
+            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn, this.pk );
             		messageOut = mallochiteMessageManager.generateResponseSocket( clientMetaDataHashMap , localMetaDataHashMap);
             	}
             	
