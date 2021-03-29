@@ -31,22 +31,12 @@ public abstract class Node extends Thread
     
     public Node ( String hostIpAddress )
     {
+    	this.connectionManager = new ConnectionManager();
     	this.hostIpAddress = hostIpAddress;
     	this.listening = false;
     }
 	
-	public void closeServerSocket () throws IOException
-	{
-        try
-        {
-            this.serverSocket.close();
-            this.listening = false;
-            this.interrupt();
-        }
-        catch ( SocketException ex ) { throw ex; }
-	}
-	
-    public void startListeningOnPort ( int portNumberToUse )
+    public void startListeningOnPort ( int portNumberToUse ) throws IOException
     {
         try
         {
@@ -56,6 +46,41 @@ public abstract class Node extends Thread
         }
         
         catch ( IOException ex ) { ex.printStackTrace(); }
+        
+    }
+    
+	public void closeServerSocket () throws IOException
+	{
+        try
+        {
+        	System.out.println("closing server socket");
+            this.listening = false;
+            this.interrupt();
+            this.serverSocket.close();
+        }
+        catch ( SocketException ex ) { throw ex; }
+        finally
+        {
+            this.listening = false;
+            this.interrupt();
+            this.serverSocket.close();
+        }
+	}
+    
+    public void makeConnection(String remoteIpAddress , int portToListen )
+    {
+		try
+		{
+			this.connectionManager.socketForFirstContact( remoteIpAddress, portToListen );
+		} catch (UnknownHostException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
     }
 	
 	/* runs methods on a separate thread 
@@ -68,8 +93,9 @@ public abstract class Node extends Thread
         try 
         {
         	Socket socketForListening = this.serverSocket.accept();
-        	this.connectionManager = new ConnectionManager( socketForListening );
-            this.connectionManager.start();
+        	this.connectionManager = new ConnectionManager();
+          this.connectionManager.setMetaSocket( socketForListening );
+          this.connectionManager.start();
         	
         	Scanner scanner = new Scanner ( System.in );
     		boolean makeConnection = true;
@@ -94,7 +120,6 @@ public abstract class Node extends Thread
             		
             	//	this.connectionManager.socketForFirstContact( remoteIpAddress, portToListen );
         		}
-    		}    		
         }
         
         catch ( IOException ex ) { ex.printStackTrace(); }

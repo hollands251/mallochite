@@ -35,7 +35,7 @@ public class MallochiteMessageManager
     	
     	HashMap messageSegment;
     
-    	if ( message.contains( "GREET" ) ) // TODO must make regex to ensure start of line
+    	if ( message != null && message.contains( "GREET" ) ) // TODO must make regex to ensure start of line
     	{
     		messageSegment = this.parseDataFromHeader( message );
     	}
@@ -76,6 +76,9 @@ public class MallochiteMessageManager
     	return parsedMessageHashMap;
     }
     
+    /*
+     * Takes method from message sent and returns the appropriate response method 
+     */
 	public String generateResponseSocket( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap )
 	{
 		String method = clientMetaDataHashMap.get( "method" ); 
@@ -126,6 +129,9 @@ public class MallochiteMessageManager
 		case "DEPART":
 			response = RSAEncryption.encrypt(publicKey,"DEPART: " + UUID + ":" + ipv4 + ":" + port );
 			break;
+    	case "OPEN":
+    		response = "OPEN";
+    		break;
 		default:
 			response = RSAEncryption.encrypt(publicKey, "INVALID");
 			break;
