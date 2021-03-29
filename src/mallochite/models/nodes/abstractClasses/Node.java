@@ -15,6 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.security.Key;
 import java.util.Scanner;
 
 import mallochite.models.exceptions.UninitializedSocket;
@@ -26,6 +27,7 @@ public abstract class Node extends Thread
     private ServerSocket serverSocket;
     private ConnectionManager connectionManager;
     private boolean listening;
+    private Key keypair;
     
     public Node ( String hostIpAddress )
     {
@@ -91,8 +93,33 @@ public abstract class Node extends Thread
         try 
         {
         	Socket socketForListening = this.serverSocket.accept();
-        	this.connectionManager.setMetaSocket( socketForListening );
-            this.connectionManager.start();		
+        	this.connectionManager = new ConnectionManager();
+          this.connectionManager.setMetaSocket( socketForListening );
+          this.connectionManager.start();
+        	
+        	Scanner scanner = new Scanner ( System.in );
+    		boolean makeConnection = true;
+    		
+    		while ( makeConnection )
+    		{
+        		System.out.println( "Make Connection? [Y/n]" );
+        		String response = scanner.nextLine();
+        		
+        		if ( response.equals( "n" ) ) 
+        		{
+        			makeConnection = false;
+        			break;
+        		}
+        		else
+        		{
+            		System.out.println( "enter IP address to connect to" );
+            		String remoteIpAddress = scanner.nextLine();
+
+            		System.out.println( "enter port to connect to" );
+            		int portToListen = scanner.nextInt();
+            		
+            	//	this.connectionManager.socketForFirstContact( remoteIpAddress, portToListen );
+        		}
         }
         
         catch ( IOException ex ) { ex.printStackTrace(); }
