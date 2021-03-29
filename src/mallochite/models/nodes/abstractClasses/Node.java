@@ -35,8 +35,9 @@ public abstract class Node extends Thread
 	private ConnectionManager connectionManager;
     private boolean listening;
     private Key keypair;
+    private User user;
     
-    public Node ( String hostIpAddress )
+    public Node ( String hostIpAddress ) throws NoSuchAlgorithmException
     {
     	this.connectionManager = new ConnectionManager();
     	this.hostIpAddress = hostIpAddress;
@@ -111,7 +112,7 @@ public abstract class Node extends Thread
         	}
         }
         
-        catch ( IOException ex ) { }
+        catch ( IOException | NoSuchAlgorithmException ex ) { }
         
         finally 
         { 
@@ -147,5 +148,15 @@ public abstract class Node extends Thread
 	public void setServerSocket(ServerSocket serverSocket)
 	{
 		this.serverSocket = serverSocket;
+	}
+
+	public User getUser()
+	{
+		return user;
+	}
+
+	public void setUser(User user)
+	{
+		this.user = user;
 	}
 }

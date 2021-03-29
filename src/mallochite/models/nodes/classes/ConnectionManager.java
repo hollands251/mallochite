@@ -32,10 +32,14 @@ public class ConnectionManager extends Thread
     private BufferedReader in;
     private PrintWriter out;
     MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
+    private User thisUser;
     
-    public ConnectionManager()
+    private User user;
+    
+    public ConnectionManager() throws NoSuchAlgorithmException
     {
-    	
+        this.keyPair = RSAEncryption.keyGenerator();
+        this.pk = this.keyPair.getPublic();
     }
     
     public ConnectionManager( Socket socket ) throws IOException, NoSuchAlgorithmException
@@ -69,19 +73,39 @@ public class ConnectionManager extends Thread
             
             while ( messageIn != null )
             {
-            	if ( messageIn != null && messageIn != "" ) // will sometimes throw error if null is not checked for 
+            	if ( messageIn != null && messageIn != "" )
             	{
-            		System.out.println( messageIn );
             		
-            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn, pk );
-            		messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap, keyPair);
+        			try
+        			{
+                		//messageIn = RSAEncryption.decrypt( this.keyPair.getPrivate() , messageIn.getBytes() );
+                		
+                		System.out.println( messageIn );
+                		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn, pk );
+        				messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap, this.keyPair );
+        			}
+        			catch ( NoSuchAlgorithmException ex ) 
+        			{ 
+        				messageOut = "Message out is not encrypted";
+        			}
             		
             		
             		if(!messageIn.contains("GREET")) {
             			//DECRYPTION HERE!!!!!!!!!!!!!!!!!
-            		message = RSAEncryption.decrypt( this.keyPair.getPrivate(), messageOut.getBytes() );
-            		}
             			
+            			try
+            			{
+            				// encrypts with own public key. Should encrypt with other nodes public
+            				messageOut = RSAEncryption.encrypt( this.keyPair.getPublic(), messageOut ).toString();
+            			}
+            			catch ( NoSuchAlgorithmException ex )
+            			{
+            				// TODO try to encrypt but if fail then don't. Remove for production
+            			}
+            			
+            		}
+            		
+            		
             	}
             	
             	if ( messageIn == null || messageIn.equals( "OPEN" ) )
@@ -92,7 +116,7 @@ public class ConnectionManager extends Thread
             	if ( messageOut != null )
             	{
             		// encrypt 
-            		out.println(message);
+            		out.println( messageOut );
             		out.flush();
             	}
             	
@@ -212,4 +236,15 @@ public class ConnectionManager extends Thread
         this.out = new PrintWriter( metaSocket.getOutputStream() );
 	}
 
+	public User getThisUser()
+	{
+		return thisUser;
+	}
+
+	public void setThisUser(User thisUser)
+	{
+		this.thisUser = thisUser;
+	}
+
 }
+
