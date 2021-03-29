@@ -15,6 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.security.Key;
 import java.util.Scanner;
 
 import mallochite.models.exceptions.UninitializedSocket;
@@ -27,6 +28,7 @@ public abstract class Node extends Thread
     private ServerSocket serverSocket;
 	private ConnectionManager connectionManager;
     private boolean listening;
+    private Key keypair;
     
     public Node ( String hostIpAddress )
     {

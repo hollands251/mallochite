@@ -1,7 +1,17 @@
 package mallochite.models.nodes.classes;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import mallochite.encryption.RSAEncryption;
 
 public class MallochiteMessageManager
 {
@@ -19,8 +29,9 @@ public class MallochiteMessageManager
      * After decrypting the metadata of the message is parsed, stored in a hashmap and returned to be
      * used by the connection Negotiator 
      */
-    public HashMap<String , String> parseHeader( String message )
+    public HashMap<String , String> parseHeader( String message, Key pubKey ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
     {
+    	
     	
     	HashMap messageSegment;
     
@@ -31,7 +42,9 @@ public class MallochiteMessageManager
     	else
     	{
     		// TODO decrypt message as GREETINGS is the only one allowed not to be encrypted
+    		//Encrypt here with PK
     		messageSegment = this.parseDataFromHeader( message );
+    		RSAEncryption.encrypt(pubKey, message);
     	}
     	
     	return messageSegment;
@@ -94,32 +107,33 @@ public class MallochiteMessageManager
 		return response;
 	}
 	
-	public String generateResponseServer( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap )
+	public byte[] generateResponseServer( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap, KeyPair keyPair ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
 	{
 		String method = clientMetaDataHashMap.get( "method" ); 
 		String port = clientMetaDataHashMap.get( "port" );
 		
-		String publicKey = localMetaDataHashMap.get( "publicKey" );
+		//String publicKey = localMetaDataHashMap.get( "publicKey" );
+		Key publicKey = keyPair.getPublic();
 		String UUID = localMetaDataHashMap.get( "UUID" );
 		String ipv4 = localMetaDataHashMap.get( "ipv4" );
-		String response;	
+		byte[] response;	
 		
 		switch ( method )
 		{
 		case "GREET":
-			response = "GREET:" + publicKey;
+			response = ("GREET: " + publicKey.toString()).getBytes() ;
 			break;
 		case "AFFIRM":
-			response = "CONVERSE:" + UUID + ":" + ipv4 + ":" + port;
+			response = RSAEncryption.encrypt(publicKey,"CONVERSE: " + UUID + ":" + ipv4 + ":" + port );
 			break;
 		case "DEPART":
-			response = "DEPART:" + UUID + ":" + ipv4 + ":" + port;
+			response = RSAEncryption.encrypt(publicKey,"DEPART: " + UUID + ":" + ipv4 + ":" + port );
 			break;
     	case "OPEN":
     		response = "OPEN";
     		break;
 		default:
-			response = "INVALID";
+			response = RSAEncryption.encrypt(publicKey, "INVALID");
 			break;
 		}
 		return response;

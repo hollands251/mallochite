@@ -6,7 +6,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.Key;
+import java.security.KeyPair;
 import java.util.Scanner;
+
+import mallochite.encryption.RSAEncryption;
+
 import java.util.HashMap;
 
 public class ConnectionManager extends Thread
@@ -39,30 +44,45 @@ public class ConnectionManager extends Thread
         {
             System.out.println( "Received a connection" );
             String messageIn = "";
-            String messageOut = "";
+            byte[] messageOut = null;
+            String message = ""; 
             HashMap<String , String> localMetaDataHashMap = new HashMap<String , String>();
 
 //    		localMetaDataHashMap.put( "pubKey" , dataBaseManager.getPubKeyFromDatabase());
 //    		localMetaDataHashMap.put( "UUID" , dataBaseManager.getPubKeyFromDatabase());
 //    		localMetaDataHashMap.put( "ipv4" , dataBaseManager.getPubKeyFromDatabase());
+            
+            KeyPair keyPair = RSAEncryption.keyGenerator();
+            Key pk = keyPair.getPublic();
     		
     		// temporary data
-    		localMetaDataHashMap.put( "publicKey" , "public key");
+    		//localMetaDataHashMap.put( "publicKey" , pk.toString());
     		localMetaDataHashMap.put( "UUID" , "1");
     		localMetaDataHashMap.put( "ipv4" , "192.168.x.x");
             
             while ( messageIn != null )
-            {	
-            	messageIn = in.readLine();
-            	
+            {
             	if ( messageIn != null && messageIn != "" )
             	{
             		System.out.println( messageIn );
             		
-            		// decrypt 
+            	
             		
-            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn );
-            		messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap);
+            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn, pk );
+            		messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap, keyPair);
+            		
+            		
+            		if(!messageIn.contains("GREET")) {
+            			//DECRYPTION HERE!!!!!!!!!!!!!!!!!
+            		message= RSAEncryption.decrypt(keyPair.getPrivate(), messageOut);
+            		}
+            		else if (messageIn.contains("GREET")) {
+            			for(byte b: messageOut) {
+        					message = message + (char)b;
+        				}
+            		}
+            		
+            		
             	}
             	
             	if ( messageIn == null || messageIn.equals( "OPEN" ) )
@@ -70,10 +90,10 @@ public class ConnectionManager extends Thread
             		break;
             	}
             	
-            	if ( messageOut != "" )
+            	if ( messageOut != null )
             	{
             		// encrypt 
-            		out.println( messageOut );
+            		out.println(message);
             		out.flush();
             	}
             }
@@ -95,11 +115,12 @@ public class ConnectionManager extends Thread
             this.interrupt();
         }
     }
-    
+    /*
     /*
      * Creates a socket with the intent of sending a "GREET" header with public key
      * Waits for response from socket and reacts accordingly 
      */
+     
 	public void socketForFirstContact( String remoteIpAddress , int portToListen ) throws UnknownHostException, IOException
 	{
 
@@ -140,7 +161,7 @@ public class ConnectionManager extends Thread
             	{
             		System.out.println( messageIn );
             		// decrypt messageIn
-            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn );
+            		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn, pk );
             		messageOut = mallochiteMessageManager.generateResponseSocket( clientMetaDataHashMap , localMetaDataHashMap);
             	}
             	
@@ -151,7 +172,7 @@ public class ConnectionManager extends Thread
             		out.flush();
             	}
             	
-            	if ( messageOut.equals( "OPEN" ) )
+            	if ( messageOut.contains("DEPART") )
             	{
             		continue;
             	}
@@ -159,9 +180,7 @@ public class ConnectionManager extends Thread
         }
         finally
         {
-        	/*
-        	 *Totally self contained socket. After all data is sent, it will close itself. No need for a helper method 
-        	 */
+        	
             System.out.println( "closing stuff" );
     		socket.close();
             in.close();
