@@ -1,4 +1,4 @@
-package mallochite.models.nodes.abstractClasses;
+package mallochite.models.abstractClasses.nodes;
 
 /*
  * Andrew Hollands

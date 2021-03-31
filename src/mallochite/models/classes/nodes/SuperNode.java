@@ -1,8 +1,8 @@
-package mallochite.models.nodes.classes;
+package mallochite.models.classes.nodes;
 
 import java.security.NoSuchAlgorithmException;
 
-import mallochite.models.nodes.abstractClasses.*;
+import mallochite.models.abstractClasses.nodes.Node;
 
 public class SuperNode extends Node
 {
