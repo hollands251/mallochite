@@ -3,7 +3,7 @@ package mallochite.models.nodes.classes;
 //dummy class to store data until DB implementation 
 public class User
 {
-	public int id;
+	public String id;
 	public String username;
 	public String password;
 	public String[] message = new String[100];

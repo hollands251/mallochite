@@ -29,7 +29,7 @@ public class Mallochite
 //		System.out.println("Password: ");
 //		String password = scanner.nextLine();
 		
-		remoteUser.id = 0;
+		remoteUser.id = "0";
 		remoteUser.ipAddress = "192.168.2.58";
 		remoteUser.port = 42424;
 		remoteUser.username = "bill";
@@ -38,7 +38,7 @@ public class Mallochite
 		{
 			thisUser = new User();
 			
-			thisUser.id = 2;
+			thisUser.id = "1234-12346743-3423567";
 			thisUser.username = "user1";
 			thisUser.ipAddress = "127.0.0.1";
 			thisUser.port = 23895;
