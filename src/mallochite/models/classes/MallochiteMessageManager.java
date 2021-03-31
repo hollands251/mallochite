@@ -1,4 +1,4 @@
-package mallochite.models.nodes.classes;
+package mallochite.models.classes;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;

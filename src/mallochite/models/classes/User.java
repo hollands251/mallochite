@@ -1,4 +1,4 @@
-package mallochite.models.nodes.classes;
+package mallochite.models.classes;
 
 //dummy class to store data until DB implementation 
 public class User

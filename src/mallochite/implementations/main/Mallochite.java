@@ -11,8 +11,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import mallochite.models.classes.*;
 import mallochite.models.classes.nodes.SubNode;
-import mallochite.models.nodes.classes.*;
 
 public class Mallochite 
 {

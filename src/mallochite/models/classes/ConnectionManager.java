@@ -1,4 +1,4 @@
-package mallochite.models.nodes.classes;
+package mallochite.models.classes;
 
 import java.io.BufferedReader;
 import java.io.IOException;

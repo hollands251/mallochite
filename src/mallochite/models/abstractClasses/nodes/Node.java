@@ -24,8 +24,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import mallochite.models.classes.*;
 import mallochite.models.exceptions.UninitializedSocket;
-import mallochite.models.nodes.classes.*;
 
 public abstract class Node extends Thread
 {
