@@ -107,6 +107,15 @@ public class MallochiteMessageManager
 		return response;
 	}
 	
+	public String messageRecievedReply ( String uuid , String ipAddress )
+	{
+		String response;
+		
+		response = String.format( "%s:%s:%s" , "RECEIVED" , uuid , ipAddress );
+		
+		return response;
+	}
+	
 	public String generateResponseServer( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap, KeyPair keyPair ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
 	{
 		String method = clientMetaDataHashMap.get( "method" ); 

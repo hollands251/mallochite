@@ -21,34 +21,35 @@ public class Mallochite
 		Scanner scanner = new Scanner( System.in );
 		SubNode subNode1 = null;
 		User thisUser = null;
-		User remoteUser = null;
+		User remoteUser = new User();
 		
-		System.out.println("Sign in");
-		System.out.println("Username: ");
-		String username = scanner.nextLine();
-		System.out.println("Password: ");
-		String password = scanner.nextLine();
+//		System.out.println("Sign in");
+//		System.out.println("Username: ");
+//		String username = scanner.nextLine();
+//		System.out.println("Password: ");
+//		String password = scanner.nextLine();
 		
 		remoteUser.id = 0;
 		remoteUser.ipAddress = "192.168.2.58";
 		remoteUser.port = 42424;
 		remoteUser.username = "bill";
 		
-		if ( username.equals( "user1" ) && password.equals( "pass" ) )
+		if ( true )
 		{
 			thisUser = new User();
 			
 			thisUser.id = 2;
-			thisUser.username = username;
-			thisUser.ipAddress = "192.168.2.58";
+			thisUser.username = "user1";
+			thisUser.ipAddress = "127.0.0.1";
 			thisUser.port = 23895;
 			thisUser.addUser ( remoteUser );
+			
 		}
-		else
-		{
-			System.out.println( " Authentication Failed " );
-			System.exit(0);
-		}
+//		else
+//		{
+//			System.out.println( " Authentication Failed " );
+//			System.exit(0);
+//		}
 
 		
 
@@ -61,6 +62,7 @@ public class Mallochite
 		try
 		{
 			subNode1 = new SubNode( thisUser.ipAddress );
+			subNode1.setThisUser ( thisUser );
 			
 			while ( subNode1.isListening() )
 			{
@@ -103,7 +105,6 @@ public class Mallochite
 	    			if ( userToConnect != null ) 
 	    			{
 	    				System.out.println( "Connecting to " + usernameToSearch );
-	    				subNode1.setUser ( thisUser );
 	    				subNode1.makeConnection( userToConnect.ipAddress , userToConnect.port );
 	    			}
 	        		

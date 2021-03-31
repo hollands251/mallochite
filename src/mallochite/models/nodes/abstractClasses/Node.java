@@ -35,7 +35,7 @@ public abstract class Node extends Thread
 	private ConnectionManager connectionManager;
     private boolean listening;
     private Key keypair;
-    private User user;
+    private User thisUser;
     
     public Node ( String hostIpAddress ) throws NoSuchAlgorithmException
     {
@@ -105,6 +105,7 @@ public abstract class Node extends Thread
                 	if ( !this.connectionManager.isAlive() )
                 	{
                 		this.connectionManager = new ConnectionManager();
+                		this.connectionManager.setThisUser( thisUser );
                 		this.connectionManager.setMetaSocket( socketForListening );
                 		this.connectionManager.start();
                 	}
@@ -150,13 +151,13 @@ public abstract class Node extends Thread
 		this.serverSocket = serverSocket;
 	}
 
-	public User getUser()
+	public User getThisUser()
 	{
-		return user;
+		return thisUser;
 	}
 
-	public void setUser(User user)
+	public void setThisUser(User user)
 	{
-		this.user = user;
+		this.thisUser = user;
 	}
 }

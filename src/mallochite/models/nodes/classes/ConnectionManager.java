@@ -34,8 +34,6 @@ public class ConnectionManager extends Thread
     MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
     private User thisUser;
     
-    private User user;
-    
     public ConnectionManager() throws NoSuchAlgorithmException
     {
         this.keyPair = RSAEncryption.keyGenerator();
@@ -54,99 +52,62 @@ public class ConnectionManager extends Thread
     @Override
     public void run()
     {
-        try
+        String messageIn = "";
+        String messageOut = "";
+        String terminatingString = "RECEIVED";
+        String localIpAddress = thisUser.ipAddress;
+        String uuid = String.valueOf( thisUser.id );
+        boolean listening = true;
+        
+        // runs until message received or dropped 
+        while ( listening )
         {
-            System.out.println( "Received a connection" );
-            String messageIn = "";
-            String messageOut = null;
-            String message = ""; 
-            HashMap<String , String> localMetaDataHashMap = new HashMap<String , String>();
-
-//    		localMetaDataHashMap.put( "pubKey" , dataBaseManager.getPubKeyFromDatabase());
-//    		localMetaDataHashMap.put( "UUID" , dataBaseManager.getPubKeyFromDatabase());
-//    		localMetaDataHashMap.put( "ipv4" , dataBaseManager.getPubKeyFromDatabase());
-    		
-    		// temporary data
-    		//localMetaDataHashMap.put( "publicKey" , pk.toString());
-    		localMetaDataHashMap.put( "UUID" , "1");
-    		localMetaDataHashMap.put( "ipv4" , "192.168.x.x");
-            
-            while ( messageIn != null )
+            try
             {
+                System.out.println( "Received a message" );
+                messageIn = in.readLine();
+
+                // move into method to clean up code?
             	if ( messageIn != null && messageIn != "" )
             	{
+            		// validate message
+            		thisUser.addMessage( messageIn );
             		
-        			try
-        			{
-                		//messageIn = RSAEncryption.decrypt( this.keyPair.getPrivate() , messageIn.getBytes() );
-                		
-                		System.out.println( messageIn );
-                		HashMap<String , String> clientMetaDataHashMap = mallochiteMessageManager.parseHeader( messageIn, pk );
-        				messageOut = mallochiteMessageManager.generateResponseServer( clientMetaDataHashMap , localMetaDataHashMap, this.keyPair );
-        			}
-        			catch ( NoSuchAlgorithmException ex ) 
-        			{ 
-        				messageOut = "Message out is not encrypted";
-        			}
+            		messageOut = mallochiteMessageManager.messageRecievedReply ( uuid , localIpAddress );
             		
-            		
-            		if(!messageIn.contains("GREET")) {
-            			//DECRYPTION HERE!!!!!!!!!!!!!!!!!
-            			
-            			try
-            			{
-            				// encrypts with own public key. Should encrypt with other nodes public
-            				messageOut = RSAEncryption.encrypt( this.keyPair.getPublic(), messageOut ).toString();
-            			}
-            			catch ( NoSuchAlgorithmException ex )
-            			{
-            				// TODO try to encrypt but if fail then don't. Remove for production
-            			}
-            			
-            		}
-            		
-            		
-            	}
-            	
-            	if ( messageIn == null || messageIn.equals( "OPEN" ) )
-            	{
-            		break;
-            	}
-            	
-            	if ( messageOut != null )
-            	{
-            		// encrypt 
             		out.println( messageOut );
             		out.flush();
             	}
             	
-            	messageIn = in.readLine();
+            	if ( messageOut != null && messageOut.contains( terminatingString ) )
+            	{
+            		listening = false;
+            	}
+            }
+            
+            catch( Exception e ) { e.printStackTrace(); }
+            
+            finally
+            {
+                this.out.close();
+                this.interrupt();
+                
+                // closing this.in and this.metasocket require an IOException
+                try { this.in.close(); this.metaSocket.close(); } 
+                catch (IOException e) { e.printStackTrace(); }
+                
+                System.out.println( "Connection closed" );
             }
         }
-        
-        catch( Exception e ) { e.printStackTrace(); }
-        
-        finally
-        {
-        	System.out.println( "Connection closed" );
-            try
-			{
-				this.in.close();
-				this.metaSocket.close();
-			} 
-            catch (IOException e) { e.printStackTrace(); }
-            
-            this.out.close();
-            this.interrupt();
-        }
     }
+    
     /*
     /*
      * Creates a socket with the intent of sending a "GREET" header with public key
      * Waits for response from socket and reacts accordingly 
      */
      
-	public void socketForFirstContact( String remoteIpAddress , int portToListen ) throws UnknownHostException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
+	public void sendMessage( String remoteIpAddress ) throws UnknownHostException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
 	{
 
 		Socket socket;
