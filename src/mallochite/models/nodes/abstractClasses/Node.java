@@ -34,17 +34,17 @@ public abstract class Node extends Thread
     private ServerSocket serverSocket;
 	private ConnectionManager connectionManager;
     private boolean listening;
-    private Key keypair;
     private User thisUser;
     
-    public Node ( String hostIpAddress ) throws NoSuchAlgorithmException
+    public Node ( String hostIpAddress ) 
     {
     	this.connectionManager = new ConnectionManager();
     	this.hostIpAddress = hostIpAddress;
     	this.listening = true;
     }
 	
-    public void startListeningOnPort ( int portNumberToUse ) throws IOException
+    
+    public void openServerSocket ( int portNumberToUse ) throws IOException
     {
         try
         {
@@ -57,6 +57,7 @@ public abstract class Node extends Thread
         
     }
     
+    
 	public void closeServerSocket () throws IOException
 	{
         try
@@ -65,31 +66,28 @@ public abstract class Node extends Thread
             this.serverSocket.close();
         }
         catch ( SocketException ex ) { throw ex; }
+        
         finally
         {
             this.serverSocket.close();
         }
 	}
     
-    public void makeConnection(String remoteIpAddress , int portToListen ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
+	
+    public void makeConnection( User userToConnectWith )
     {
+    	Scanner scanner = new Scanner( System.in );
+    	String messageToSend = "";
+    	
 		try
 		{
-			this.connectionManager.socketForFirstContact( remoteIpAddress, portToListen );
-		} catch (UnknownHostException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.connectionManager.sendMessage( userToConnectWith, messageToSend );
 		} 
+		catch (UnknownHostException e) { e.printStackTrace(); } 
+		catch (IOException e) { e.printStackTrace(); } 
     }
 	
-	/* runs methods on a separate thread 
-	 * 
-	 * 
+	/* 
 	 */
 	@Override
 	public void run ()
@@ -104,15 +102,13 @@ public abstract class Node extends Thread
                 	
                 	if ( !this.connectionManager.isAlive() )
                 	{
-                		this.connectionManager = new ConnectionManager();
+                		this.connectionManager = new ConnectionManager( socketForListening );
                 		this.connectionManager.setThisUser( thisUser );
-                		this.connectionManager.setMetaSocket( socketForListening );
                 		this.connectionManager.start();
                 	}
         		}
         	}
         }
-        
         catch ( IOException | NoSuchAlgorithmException ex ) { }
         
         finally 

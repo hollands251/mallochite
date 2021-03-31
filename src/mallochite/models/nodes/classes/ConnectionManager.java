@@ -12,11 +12,17 @@ public class ConnectionManager extends Thread
     private Socket metaSocket;	// responsible for listening for incoming connections
     private MallochiteMessageManager mallochiteMessageManager = new MallochiteMessageManager();
     private User thisUser;
+    private boolean metaSocketAvailable;
     
+    public ConnectionManager()
+    {
+    	this.metaSocketAvailable = false; // some method require the metaSocket so throw an exception if metaSocketAvailable is false
+    }
     
     public ConnectionManager( Socket socket ) throws IOException, NoSuchAlgorithmException
     {
         this.metaSocket = socket;
+        metaSocketAvailable = true;
     }
 
     
@@ -25,57 +31,52 @@ public class ConnectionManager extends Thread
     {
     	BufferedReader in = null;
     	PrintWriter out = null;
-        String messageIn = "";
-        String messageOut = "";
-        String terminatingString = "RECEIVED";
         String localIpAddress = thisUser.ipAddress;
         String uuid = String.valueOf( thisUser.id );
         boolean listening = true;
-        
-    	// must initialize in and out within a try catch incase of IOException
-    	try
-    	{
-             in = new BufferedReader( new InputStreamReader( this.metaSocket.getInputStream() ) );
-             out = new PrintWriter( this.metaSocket.getOutputStream() );
-    	}
-    	catch ( IOException ex ) { ex.printStackTrace(); }
-        
-        // runs until message received or dropped 
-        while ( listening )
-        {
-            try
-            {
-                System.out.println( "Received a message" );
-                messageIn = in.readLine();
+        	
+        try
+		{
+        	// must initialize in and out within a try catch in case of IOException
+            in = new BufferedReader( new InputStreamReader( this.metaSocket.getInputStream() ) );
+            out = new PrintWriter( this.metaSocket.getOutputStream() );
+            String messageIn = "";
+            String messageOut = "";
+            String terminatingString = "RECEIVED";
+            
+			while ( listening )
+			{
+		        System.out.println( "Received a message" );
+		        messageIn = in.readLine();
 
-                // move into method to clean up code?
-            	if ( messageIn != null && messageIn != "" )
-            	{
-            		// validate message
-            		thisUser.addMessage( messageIn );
-            		
-            		messageOut = mallochiteMessageManager.messageRecievedReply ( uuid , localIpAddress );
-            		
-            		out.println( messageOut );
-            		out.flush();
-            	}
-            	
-            	if ( messageOut != null && messageOut.contains( terminatingString ) )
-            	{
-            		listening = false;
-            		in.close(); 
-            		this.metaSocket.close();
-            	}
-            }
-            
-            catch( Exception e ) { e.printStackTrace(); }
-            
-            finally
-            {
-                out.close();
-                this.interrupt();
-                System.out.println( "Connection closed" );
-            }
+		        // move into method to clean up code?
+		    	if ( messageIn != null && messageIn != "" )
+		    	{
+		    		// validate message
+		    		thisUser.addMessage( messageIn );
+		    		
+		    		messageOut = mallochiteMessageManager.messageRecievedReply ( uuid , localIpAddress );
+		    		
+		    		out.println( messageOut );
+		    		out.flush();
+		    	}
+		    	
+		    	if ( messageOut != null && messageOut.contains( terminatingString ) )
+		    	{
+		    		listening = false;
+		    		in.close(); 
+		    		this.metaSocket.close();
+		    	}
+			 }
+		}   
+        
+        catch( Exception e ) { e.printStackTrace(); }
+        
+        finally
+        {
+            out.close();
+            this.interrupt();
+            System.out.println( "Connection closed" );
         }
     }
     
@@ -131,6 +132,7 @@ public class ConnectionManager extends Thread
 	public void setMetaSocket(Socket metaSocket) throws IOException
 	{
 		this.metaSocket = metaSocket;
+		this.metaSocketAvailable = true;
 	}
 
 	public User getThisUser()

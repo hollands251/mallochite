@@ -15,7 +15,7 @@ import mallochite.models.nodes.classes.*;
 
 public class Mallochite 
 {
-	public static void main ( String [] args ) throws IOException
+	public static void main ( String [] args ) throws IOException, NoSuchAlgorithmException
 	{
 		
 		Scanner scanner = new Scanner( System.in );
@@ -67,7 +67,7 @@ public class Mallochite
 			while ( subNode1.isListening() )
 			{
 				
-				subNode1.startListeningOnPort( thisUser.port );
+				subNode1.openServerSocket( thisUser.port );
 				subNode1.start();
 				
 	    		System.out.println( "Make Connection? [Y/n]" );
@@ -105,32 +105,11 @@ public class Mallochite
 	    			if ( userToConnect != null ) 
 	    			{
 	    				System.out.println( "Connecting to " + usernameToSearch );
-	    				subNode1.makeConnection( userToConnect.ipAddress , userToConnect.port );
+	    				subNode1.makeConnection( userToConnect );
 	    			}
-	        		
 	    		}
 			}   
       
-		} catch (InvalidKeyException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadPaddingException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		finally
 		{
