@@ -31,8 +31,8 @@ public class ConnectionManager extends Thread
     {
     	BufferedReader in = null;
     	PrintWriter out = null;
-        String localIpAddress = thisUser.ipAddress;
-        String uuid = String.valueOf( thisUser.id );
+        String localIpAddress = thisUser.getIP();
+        String uuid = String.valueOf( thisUser.getUUID() );
         boolean listening = true;
         	
         try
@@ -53,7 +53,7 @@ public class ConnectionManager extends Thread
 		    	if ( messageIn != null && messageIn != "" )
 		    	{
 		    		// validate message
-		    		thisUser.addMessage( messageIn );
+		    		thisUser.addMessage( uuid , messageIn );
 		    		
 		    		messageOut = mallochiteMessageManager.messageRecievedReply ( uuid , localIpAddress );
 		    		

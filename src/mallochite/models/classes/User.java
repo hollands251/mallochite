@@ -1,26 +1,87 @@
 package mallochite.models.classes;
 
-//dummy class to store data until DB implementation 
-public class User
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+public class User 
 {
-	public String id;
-	public String username;
-	public String password;
-	public String[] message = new String[100];
-	public String ipAddress;
-	public int port;
-	public User[] user = new User[10];
-	public int userCount , messageCount = 0;
-	
-	public void addMessage ( String messageIn )
-	{
-		this.message[ messageCount ] = messageIn;
-		this.messageCount++;
+	//make everything string for now...
+	String UUID;
+	String PasswordHash;
+	String IP;
+	String AllowedList; //change to list?
+	String AddressBook;
+	String DuressPassword;
+	Hashtable<String , ArrayList<String> > conversations = new Hashtable<String , ArrayList<String> >();
+
+	//placeholder?
+	public User (String UUID, String passwordHash, String iP, String allowedList, String addressBook,
+			String duressPassword) {
+		this.UUID = UUID;
+		this.PasswordHash = passwordHash;
+		this.IP = iP;
+		this.AllowedList = allowedList;
+		this.AddressBook = addressBook;
+		this.DuressPassword = duressPassword;
 	}
 	
-	public void addUser ( User user )
+	
+	public void addConversation ( String uuid )
 	{
-		this.user[ this.userCount ] = user;
-		this.userCount++;
+		ArrayList<String> conversation = new ArrayList();
+		conversations.put( uuid, conversation );
+	}
+	
+	
+	public void addMessageToConversation ( String uuid , String message )
+	{
+		ArrayList<String> currentConversation = conversations.get( uuid );
+		currentConversation.add( message );
+	}
+	
+
+	public String toString() {
+		return "Node [UUID=" + UUID + ", PasswordHash=" + PasswordHash + ", IP=" + IP + ", AllowedList=" + AllowedList
+				+ ", DuressPassword=" + DuressPassword + "]";
+	}
+
+	public String getUUID() {
+		return UUID;
+	}
+
+	public void setUUID(String uUID) {
+		UUID = uUID;
+	}
+
+	public String getPasswordHash() {
+		return PasswordHash;
+	}
+
+	public void setPasswordHash(String passwordHash) {
+		PasswordHash = passwordHash;
+	}
+
+	public String getIP() {
+		return IP;
+	}
+
+	public void setIP(String iP) {
+		IP = iP;
+	}
+
+	public String getAllowedList() {
+		return AllowedList;
+	}
+
+	public void setAllowedList(String allowedList) {
+		AllowedList = allowedList;
+	}
+
+	public String getDuressPassword() {
+		return DuressPassword;
+	}
+
+	public void setDuressPassword(String duressPassword) {
+		DuressPassword = duressPassword;
 	}
 }
