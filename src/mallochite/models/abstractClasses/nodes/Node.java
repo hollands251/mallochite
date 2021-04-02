@@ -36,10 +36,11 @@ public abstract class Node extends Thread
     private boolean listening;
     private User thisUser;
     
-    public Node ( String hostIpAddress ) 
+    public Node ( User thisUser ) 
     {
     	this.connectionManager = new ConnectionManager();
-    	this.hostIpAddress = hostIpAddress;
+    	this.thisUser = thisUser;
+    	this.hostIpAddress = thisUser.getIP();
     	this.listening = true;
     }
 	

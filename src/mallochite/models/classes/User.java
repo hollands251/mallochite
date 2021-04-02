@@ -6,12 +6,14 @@ import java.util.Hashtable;
 public class User 
 {
 	//make everything string for now...
-	String UUID;
-	String PasswordHash;
-	String IP;
-	String AllowedList; //change to list?
-	String AddressBook;
-	String DuressPassword;
+	private String UUID;
+	private String PasswordHash;
+	private String IP;
+	private String AllowedList; //change to list?
+	private String AddressBook;
+	private String DuressPassword;
+	private String username;
+	int port;
 	Hashtable<String , ArrayList<String> > conversations = new Hashtable<String , ArrayList<String> >();
 
 	//placeholder?
@@ -26,10 +28,13 @@ public class User
 	}
 	
 	
-	public void addConversation ( String uuid )
+	public User () {}
+	
+	
+	public void addConversation ( User user )
 	{
 		ArrayList<String> conversation = new ArrayList();
-		conversations.put( uuid, conversation );
+		conversations.put( user.getUUID() , conversation );
 	}
 	
 	
@@ -83,5 +88,29 @@ public class User
 
 	public void setDuressPassword(String duressPassword) {
 		DuressPassword = duressPassword;
+	}
+
+
+	public int getPort()
+	{
+		return this.port;
+	}
+
+
+	public void setPort(int port)
+	{
+		this.port = port;
+	}
+
+
+	public String getUsername()
+	{
+		return username;
+	}
+
+
+	public void setUsername(String username)
+	{
+		this.username = username;
 	}
 }

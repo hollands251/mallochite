@@ -53,7 +53,7 @@ public class ConnectionManager extends Thread
 		    	if ( messageIn != null && messageIn != "" )
 		    	{
 		    		// validate message
-		    		thisUser.addMessage( uuid , messageIn );
+		    		thisUser.addMessageToConversation( uuid , messageIn );
 		    		
 		    		messageOut = mallochiteMessageManager.messageRecievedReply ( uuid , localIpAddress );
 		    		
@@ -88,7 +88,7 @@ public class ConnectionManager extends Thread
 	public void sendMessage( User userToContact , String messageToSend ) throws IOException
 	{
 
-		Socket socket = new Socket ( userToContact.ipAddress , userToContact.port );;
+		Socket socket = new Socket ( userToContact.getIP() , userToContact.getPort() );;
 	    BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
 	    PrintWriter out  = new PrintWriter( socket.getOutputStream() );
 	    String messageIn = "";
@@ -96,7 +96,7 @@ public class ConnectionManager extends Thread
         try
         {
         	String messageToSendFormated = mallochiteMessageManager.formatMessageToSend
-        			( this.thisUser.id , this.thisUser.ipAddress , messageToSend );
+        			( this.thisUser.getIP() , this.thisUser.getIP() , messageToSend );
         	
     		out.println( messageToSendFormated );
     		out.flush();
