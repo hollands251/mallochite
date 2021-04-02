@@ -3,55 +3,59 @@ package mallochite.implementations.main;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
-import mallochite.models.nodes.classes.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import mallochite.models.classes.*;
+import mallochite.models.classes.nodes.SubNode;
 
 public class Mallochite 
 {
-	public static void main ( String [] args ) throws IOException
+	public static void main ( String [] args ) throws IOException, NoSuchAlgorithmException
 	{
 		
 		Scanner scanner = new Scanner( System.in );
 		SubNode subNode1 = null;
+		User thisUser = null;
+		User remoteUser = new User();
 		
+		remoteUser.setUUID( "0000-000000" );
+		remoteUser.setIP( "" );
+		remoteUser.setPort( 42423 );
+		remoteUser.setUsername("bill");
+		
+		thisUser = new User();
+		thisUser.setUUID( "1234-12346743-3423567" );
+		thisUser.setUsername( "user1" );
+		thisUser.setIP( "192.168.0.12" );
+		thisUser.setPort( 23950 );
+		thisUser.addConversation( remoteUser );
 
-//		System.out.println( "enter your IP address" );
-//		String localIpAddress = scanner.nextLine();
-
-//		System.out.println( "enter port to listen on" );
-//		int portToListen = scanner.nextInt();
 
 		try
 		{
-			subNode1 = new SubNode( "192.168.2.58" );
-			subNode1.startListeningOnPort( 23242 );
+			subNode1 = new SubNode( thisUser );
 			
 			while ( subNode1.isListening() )
 			{
-	    		System.out.println( "Make Connection? [Y/n]" );
-	    		String response = scanner.nextLine();
-	    		
-	    		if ( response.equals( "n" ) ) 
-	    		{
-	    			break;
-	    		}
-	    		else
-	    		{
-	        		System.out.println( "enter IP address to connect to" );
-	        		String remoteIpAddress = scanner.nextLine();
-
-	        		System.out.println( "enter port to connect to" );
-	        		int portToListen = scanner.nextInt();
-	        		
-	        		subNode1.makeConnection( remoteIpAddress , portToListen );
-	    		}
+				
+				subNode1.openServerSocket( thisUser.getPort() );
+				subNode1.start();
+				
 			}   
       
 		}
 		finally
 		{
-			subNode1.closeServerSocket();
+			if ( subNode1.getServerSocket() != null )
+			{
+				subNode1.closeServerSocket();
+			}
 		}
         
 	}

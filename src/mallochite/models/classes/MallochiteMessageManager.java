@@ -1,4 +1,4 @@
-package mallochite.models.nodes.classes;
+package mallochite.models.classes;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -107,7 +107,25 @@ public class MallochiteMessageManager
 		return response;
 	}
 	
-	public byte[] generateResponseServer( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap, KeyPair keyPair ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
+	public String messageRecievedReply ( String uuid , String ipAddress )
+	{
+		String response;
+		
+		response = String.format( "%s:%s:%s" , "RECEIVED" , uuid , ipAddress );
+		
+		return response;
+	}
+	
+	public String formatMessageToSend ( String uuid , String ipAddress , String messageToSend )
+	{
+		String messageToSendFormated;
+		
+		messageToSendFormated = String.format( "%s:%s:%s:%s" , "MESSAGE" , uuid , ipAddress , messageToSend );
+		
+		return messageToSendFormated;
+	}
+	
+	public String generateResponseServer( HashMap<String , String> clientMetaDataHashMap , HashMap<String , String> localMetaDataHashMap, KeyPair keyPair ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
 	{
 		String method = clientMetaDataHashMap.get( "method" ); 
 		String port = clientMetaDataHashMap.get( "port" );
@@ -116,24 +134,24 @@ public class MallochiteMessageManager
 		Key publicKey = keyPair.getPublic();
 		String UUID = localMetaDataHashMap.get( "UUID" );
 		String ipv4 = localMetaDataHashMap.get( "ipv4" );
-		byte[] response;	
+		String response;	
 		
 		switch ( method )
 		{
 		case "GREET":
-			response = ("GREET: " + publicKey.toString()).getBytes() ;
+			response = "GREET: " + publicKey.toString() ;
 			break;
 		case "AFFIRM":
-			response = RSAEncryption.encrypt(publicKey,"CONVERSE: " + UUID + ":" + ipv4 + ":" + port );
+			response = RSAEncryption.encrypt(publicKey,"CONVERSE: " + UUID + ":" + ipv4 + ":" + port ).toString() ;
 			break;
 		case "DEPART":
-			response = RSAEncryption.encrypt(publicKey,"DEPART: " + UUID + ":" + ipv4 + ":" + port );
+			response = RSAEncryption.encrypt(publicKey,"DEPART: " + UUID + ":" + ipv4 + ":" + port ).toString();
 			break;
     	case "OPEN":
     		response = "OPEN";
     		break;
 		default:
-			response = RSAEncryption.encrypt(publicKey, "INVALID");
+			response = RSAEncryption.encrypt(publicKey, "INVALID").toString();
 			break;
 		}
 		return response;
