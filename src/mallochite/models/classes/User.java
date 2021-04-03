@@ -15,6 +15,7 @@ public class User
 	private String username;
 	int port;
 	Hashtable<String , ArrayList<String> > conversations = new Hashtable<String , ArrayList<String> >();
+	private ArrayList<User> userList = new ArrayList<User>();
 
 	//placeholder?
 	public User (String UUID, String passwordHash, String iP, String allowedList, String addressBook,
@@ -25,6 +26,14 @@ public class User
 		this.AllowedList = allowedList;
 		this.AddressBook = addressBook;
 		this.DuressPassword = duressPassword;
+	}
+	
+	public void addUser(User user) {
+		this.userList.add(user);
+	}
+	
+	public ArrayList<User> getUserList() {
+		return this.userList;
 	}
 	
 	
