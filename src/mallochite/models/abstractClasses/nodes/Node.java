@@ -83,6 +83,7 @@ public abstract class Node extends Thread
    
 		try
 		{
+			this.connectionManager.setThisUser( this.thisUser );
 			this.connectionManager.sendMessage( userToConnectWith, messageToSend );
 		} 
 		catch (UnknownHostException e) { e.printStackTrace(); } 

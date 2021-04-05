@@ -37,6 +37,7 @@ public class ConnectionManager extends Thread
         	
         try
 		{
+        	System.out.println( "Received a message" );
         	// must initialize in and out within a try catch in case of IOException
             in = new BufferedReader( new InputStreamReader( this.metaSocket.getInputStream() ) );
             out = new PrintWriter( this.metaSocket.getOutputStream() );
@@ -46,18 +47,17 @@ public class ConnectionManager extends Thread
             
 			while ( listening )
 			{
-		        System.out.println( "Received a message" );
-		        messageIn = in.readLine();
 
 		        // move into method to clean up code?
 		    	if ( messageIn != null && messageIn != "" )
 		    	{
 		    		// validate message
+		    		System.out.println(messageIn);
 		    		thisUser.addMessageToConversation( uuid , messageIn );
 		    		
 		    		messageOut = mallochiteMessageManager.messageRecievedReply ( uuid , localIpAddress );
 		    		
-		    		out.println( messageOut + "\n" );
+		    		out.println( messageOut );
 		    		out.flush();
 		    	}
 		    	
@@ -67,6 +67,8 @@ public class ConnectionManager extends Thread
 		    		in.close(); 
 		    		this.metaSocket.close();
 		    	}
+		    	
+		    	messageIn = in.readLine();
 			 }
 		}   
         
@@ -87,20 +89,37 @@ public class ConnectionManager extends Thread
      */
 	public void sendMessage( User userToContact , String messageToSend ) throws IOException
 	{
-		System.out.println( userToContact.getIP() + " " + userToContact.getPort() );
 		Socket socket = new Socket ( userToContact.getIP() , userToContact.getPort() );
-		System.out.println( "here" );
 	    BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
 	    PrintWriter out  = new PrintWriter( socket.getOutputStream() );
 	    String messageIn = "";
-	    
+    	
         try
         {
+        	
         	String messageToSendFormated = mallochiteMessageManager.formatMessageToSend
         			( this.thisUser.getIP() , this.thisUser.getUUID() , messageToSend );
         	
     		out.println( messageToSendFormated );
     		out.flush();
+    		
+    		while ( true )
+    		{
+    			if ( messageIn != null && messageIn != "" )
+    			{
+    				System.out.println( messageIn );
+    				
+        			if ( messageIn.contains("RECEIVED") )
+        			{
+        				break;
+        			}
+    			}
+    			else
+    			{
+    				messageIn = in.readLine();
+    			}
+    			
+    		}
     		
         }
         catch ( Exception ex ) { throw ex; }
