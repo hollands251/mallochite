@@ -20,39 +20,51 @@ public class ChatManager
 	}
 	
 	
-	public void menu() throws IOException
+	public void menu() throws IOException, InterruptedException
 	{
 		Scanner scanner = new Scanner ( System.in );
-		
 		
 		System.out.println( "What would you like to do?" );
 		System.out.println( "\t 1. send message" );
 		System.out.println( "\t 2. check messages" );
 		System.out.println( "\t 3. add contact" );
+		System.out.println( "\t 4. list contacts" );
+		
+		User fillerContact = new User();
+		fillerContact.setUsername("user1");
+		fillerContact.setIP( "192.169.0.16" );
+		fillerContact.setUUID( "1234" );
+		fillerContact.setPort( 42423 );
+		this.subNode.getThisUser().addUser( fillerContact );
 		
 		String response = scanner.nextLine();
 		
 		if ( response.equals( "1" ) ) 
 		{
-			User userToContact = new User();
+			User userToContact = null;
 			System.out.println( "Who would you like to contact?" );
 			String userName = this.sc.nextLine();
 		    
 			ArrayList<User> userList = (ArrayList<User>) this.subNode.getThisUser().getUserList();
 			
 			for(User user: userList ){
-				if(user.getUsername().equals(userName)) {
+				if(user.getUsername().equals( userName )) {
 				
 					userToContact = user;
 					
 				}
 			}
 			
+			while ( userToContact == null )
+			{
+				this.subNode.sleep( 100 );
+			}
 			
 			
-			
-			this.sendMessage(userToContact);
-			
+			if ( userToContact != null )
+			{
+				this.sendMessage( userToContact );
+			}	
 		}
 		else if ( response.equals( "2" ) ) 
 		{
@@ -60,20 +72,11 @@ public class ChatManager
 		}
 		else if ( response.equals( "3" ) ) 
 		{
-			addContact();
-			
+			this.addContact();
 		}
-		else
+		else if ( response.equals( "4" ) )
 		{
-			System.out.println( "Who would you like to connect to" );
-			String usernameToSearch = scanner.nextLine();
-			User userToConnect = new User();
-    		
-			if ( userToConnect != null ) 
-			{
-				System.out.println( "Connecting to " + usernameToSearch );
-				//subNode1.makeConnection( userToConnect );
-			}
+			this.displayContacts();
 		}
 	}
 	
@@ -104,10 +107,10 @@ public class ChatManager
 		}
 	}
 	
-	public void addContact() {
+	public void addContact() 
+	{
 		
 		User contact = new User();
-		
 		
 		System.out.println("Enter the username:");
 		String contactUsername = this.sc.nextLine();
@@ -120,19 +123,13 @@ public class ChatManager
 		
 		System.out.println("Enter the port:  ");
 		int contactPort = this.sc.nextInt();
-		
-		
-		
 
 		contact.setUsername(contactUsername);
 		contact.setIP(contactIP);
 		contact.setUUID(contactUUID);
 		contact.setPort(contactPort);
 		
-		this.subNode.getThisUser().addUser(contact);
-		
-		
-		
+		this.subNode.getThisUser().addUser( contact );
 		
 	}
 	

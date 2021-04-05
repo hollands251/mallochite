@@ -16,27 +16,19 @@ import mallochite.models.classes.nodes.SubNode;
 
 public class Mallochite 
 {
-	public static void main ( String [] args ) throws IOException, NoSuchAlgorithmException
+	public static void main ( String [] args ) throws IOException, NoSuchAlgorithmException, InterruptedException
 	{
 		
 		Scanner scanner = new Scanner( System.in );
 		SubNode subNode1 = null;
 		User thisUser = null;
-		User remoteUser = new User();
-		
-		
-		remoteUser.setUUID( "0000-000000" );
-		remoteUser.setIP( "" );
-		remoteUser.setPort( 42423 );
-		remoteUser.setUsername("bill");
-		
+		User remoteUser = new User();	
 		
 		thisUser = new User();
 		thisUser.setUUID( "1234-12346743-3423567" );
 		thisUser.setUsername( "user1" );
-		thisUser.setIP( "192.168.2.143" );
+		thisUser.setIP( "192.168.0.16" );
 		thisUser.setPort( 42423 );
-		thisUser.addConversation( remoteUser );
  
 
 		try
@@ -44,12 +36,11 @@ public class Mallochite
 			subNode1 = new SubNode( thisUser );
 			subNode1.openServerSocket( subNode1.getThisUser().getPort());
 			subNode1.start();
-			ChatManager mngr  = new ChatManager(subNode1);
+			ChatManager manager  = new ChatManager(subNode1);
+			
 			while( subNode1.isListening() )
 			{
-			 mngr.menu();
-				
-				
+				manager.menu();
 			}   
       
 		}
