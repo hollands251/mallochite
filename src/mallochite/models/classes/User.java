@@ -16,6 +16,8 @@ public class User
 	int port;
 	Hashtable<String , ArrayList<String> > conversations = new Hashtable<String , ArrayList<String> >();
 	private ArrayList<User> userList = new ArrayList<User>();
+	private ArrayList<String>[] conversationHolder = new ArrayList[100]; // TODO dirty hack fix later
+	private int conversationHolderCount = 0;
 
 	//placeholder?
 	public User (String UUID, String passwordHash, String iP, String allowedList, String addressBook,
@@ -42,14 +44,17 @@ public class User
 	
 	public void addConversation ( User user )
 	{
-		ArrayList<String> conversation = new ArrayList();
-		conversations.put( user.getUUID() , conversation );
+		conversationHolder[ conversationHolderCount ] = new ArrayList<String>();
+		this.conversations.put( user.getUUID() , conversationHolder[ conversationHolderCount ] );
+		conversationHolderCount++;
 	}
 	
 	
 	public void addMessageToConversation ( String uuid , String message )
 	{
-		ArrayList<String> currentConversation = conversations.get( uuid );
+		System.out.println(uuid);
+		ArrayList<String> currentConversation = this.conversations.get( uuid );
+		
 		currentConversation.add( message );
 	}
 	

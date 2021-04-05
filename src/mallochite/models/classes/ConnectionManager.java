@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 
 public class ConnectionManager extends Thread
 {
@@ -32,7 +33,7 @@ public class ConnectionManager extends Thread
     	BufferedReader in = null;
     	PrintWriter out = null;
         String localIpAddress = thisUser.getIP();
-        String uuid = String.valueOf( thisUser.getUUID() );
+        String thisUserUuid = String.valueOf( thisUser.getUUID() );
         boolean listening = true;
         	
         try
@@ -43,7 +44,7 @@ public class ConnectionManager extends Thread
             out = new PrintWriter( this.metaSocket.getOutputStream() );
             String messageIn = "";
             String messageOut = "";
-            String terminatingString = "RECEIVED";
+            String terminatingString = "TERMINATE";
             
 			while ( listening )
 			{
@@ -53,9 +54,10 @@ public class ConnectionManager extends Thread
 		    	{
 		    		// validate message
 		    		System.out.println(messageIn);
-		    		thisUser.addMessageToConversation( uuid , messageIn );
+		    		HashMap<String , String> parsedData = mallochiteMessageManager.parseDataFromHeader( messageIn );
+		    		thisUser.addMessageToConversation( parsedData.get("UUID") , messageIn );
 		    		
-		    		messageOut = mallochiteMessageManager.messageRecievedReply ( uuid , localIpAddress );
+		    		messageOut = mallochiteMessageManager.messageRecievedReply ( thisUserUuid , localIpAddress );
 		    		
 		    		out.println( messageOut );
 		    		out.flush();

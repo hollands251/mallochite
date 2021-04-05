@@ -29,9 +29,8 @@ public class MallochiteMessageManager
      * After decrypting the metadata of the message is parsed, stored in a hashmap and returned to be
      * used by the connection Negotiator 
      */
-    public HashMap<String , String> parseHeader( String message, Key pubKey ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
+    public HashMap<String , String> parseHeader( String message ) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
     {
-    	
     	
     	HashMap messageSegment;
     
@@ -44,7 +43,7 @@ public class MallochiteMessageManager
     		// TODO decrypt message as GREETINGS is the only one allowed not to be encrypted
     		//Encrypt here with PK
     		messageSegment = this.parseDataFromHeader( message );
-    		RSAEncryption.encrypt(pubKey, message);
+    		//RSAEncryption.encrypt(pubKey, message);
     	}
     	
     	return messageSegment;
@@ -60,8 +59,8 @@ public class MallochiteMessageManager
 	    	case "GREET":
 	    		parsedMessageHashMap = parseGreet( parsedMessage );
 	    		break;
-	    	case "CONVERSE":
-	    		parsedMessageHashMap = parseConverse( parsedMessage );
+	    	case "MESSAGE":
+	    		parsedMessageHashMap = parseConverse( parsedMessage ); // fix method name
 	    		break;
 	    	case "AFFIRM":
 	    		parsedMessageHashMap = parseAffirm( parsedMessage );
@@ -186,9 +185,8 @@ public class MallochiteMessageManager
     	if ( parsedMessage.length >= CONVERSE_PARSE_COUNT )
     	{
     		parsedMessageHashMap.put( "method", parsedMessage[0] );
-    		parsedMessageHashMap.put( "UUID", parsedMessage[1] );
-    		parsedMessageHashMap.put( "ipv4", parsedMessage[2] );
-    		parsedMessageHashMap.put( "port", parsedMessage[3] );
+    		parsedMessageHashMap.put( "UUID", parsedMessage[2] );
+    		parsedMessageHashMap.put( "ipv4", parsedMessage[1] );
     	}
     	else
     	{

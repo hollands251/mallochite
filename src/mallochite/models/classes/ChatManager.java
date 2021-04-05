@@ -32,10 +32,11 @@ public class ChatManager
 		
 		User fillerContact = new User();
 		fillerContact.setUsername("user1");
-		fillerContact.setIP( "192.168.0.12" );
+		fillerContact.setIP( "192.168.0.16" );
 		fillerContact.setUUID( "1234" );
-		fillerContact.setPort( 42424 );
+		fillerContact.setPort( 25252 );
 		this.subNode.getThisUser().addUser( fillerContact );
+		this.subNode.getThisUser().addConversation( fillerContact );
 		
 		String response = scanner.nextLine();
 		
@@ -122,6 +123,7 @@ public class ChatManager
 		contact.setPort(contactPort);
 		
 		this.subNode.getThisUser().addUser( contact );
+		this.subNode.getThisUser().addConversation( contact );
 		
 	}
 	
