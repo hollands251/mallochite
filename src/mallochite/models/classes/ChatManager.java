@@ -32,9 +32,9 @@ public class ChatManager
 		
 		User fillerContact = new User();
 		fillerContact.setUsername("user1");
-		fillerContact.setIP( "192.169.0.16" );
+		fillerContact.setIP( "192.168.0.12" );
 		fillerContact.setUUID( "1234" );
-		fillerContact.setPort( 42423 );
+		fillerContact.setPort( 32323 );
 		this.subNode.getThisUser().addUser( fillerContact );
 		
 		String response = scanner.nextLine();
@@ -51,20 +51,14 @@ public class ChatManager
 				if(user.getUsername().equals( userName )) {
 				
 					userToContact = user;
-					
+					this.sendMessage( userToContact );
+				}
+				else
+				{
+					System.out.println( "user not found" );
 				}
 			}
-			
-			while ( userToContact == null )
-			{
-				this.subNode.sleep( 100 );
-			}
-			
-			
-			if ( userToContact != null )
-			{
-				this.sendMessage( userToContact );
-			}	
+
 		}
 		else if ( response.equals( "2" ) ) 
 		{
@@ -81,15 +75,13 @@ public class ChatManager
 	}
 	
 	
-	private void sendMessage(User userToContact) throws IOException {
+	private void sendMessage(User userToContact) throws IOException 
+	{
 		
 		System.out.println("Enter message to send: ");
 		String messageToSend = this.sc.nextLine();
 		
-		
 		this.subNode.makeConnection(userToContact, messageToSend);
-		
-		
 	}
 
 

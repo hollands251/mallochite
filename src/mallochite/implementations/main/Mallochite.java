@@ -28,7 +28,7 @@ public class Mallochite
 		thisUser.setUUID( "1234-12346743-3423567" );
 		thisUser.setUsername( "user1" );
 		thisUser.setIP( "192.168.0.16" );
-		thisUser.setPort( 42423 );
+		thisUser.setPort( 23232 );
  
 
 		try

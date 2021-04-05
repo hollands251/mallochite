@@ -57,7 +57,7 @@ public class ConnectionManager extends Thread
 		    		
 		    		messageOut = mallochiteMessageManager.messageRecievedReply ( uuid , localIpAddress );
 		    		
-		    		out.println( messageOut );
+		    		out.println( messageOut + "\n" );
 		    		out.flush();
 		    	}
 		    	
@@ -87,32 +87,23 @@ public class ConnectionManager extends Thread
      */
 	public void sendMessage( User userToContact , String messageToSend ) throws IOException
 	{
-
+		System.out.println( userToContact.getIP() + " " + userToContact.getPort() );
 		Socket socket = new Socket ( userToContact.getIP() , userToContact.getPort() );
+		System.out.println( "here" );
 	    BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
 	    PrintWriter out  = new PrintWriter( socket.getOutputStream() );
 	    String messageIn = "";
-        
+	    
         try
         {
         	String messageToSendFormated = mallochiteMessageManager.formatMessageToSend
-        			( this.thisUser.getIP() , this.thisUser.getIP() , messageToSend );
+        			( this.thisUser.getIP() , this.thisUser.getUUID() , messageToSend );
         	
     		out.println( messageToSendFormated );
     		out.flush();
     		
-            while ( messageIn != null )
-            {
-            	messageIn = in.readLine(); 
-            	
-            	if ( messageIn.contains( "RECEIVED" ) )
-            	{
-            		System.out.println( messageIn );
-            		break;
-            	}
-            }
         }
-        catch ( IOException ex ) { throw ex; }
+        catch ( Exception ex ) { throw ex; }
         
         finally
         {
