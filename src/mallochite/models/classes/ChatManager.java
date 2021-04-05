@@ -34,7 +34,7 @@ public class ChatManager
 		fillerContact.setUsername("user1");
 		fillerContact.setIP( "192.168.0.12" );
 		fillerContact.setUUID( "1234" );
-		fillerContact.setPort( 32323 );
+		fillerContact.setPort( 42424 );
 		this.subNode.getThisUser().addUser( fillerContact );
 		
 		String response = scanner.nextLine();
