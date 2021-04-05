@@ -45,6 +45,9 @@ public abstract class Node extends Thread
     }
 	
     
+    
+    
+    
     public void openServerSocket ( int portNumberToUse ) throws IOException
     {
         try
@@ -75,11 +78,9 @@ public abstract class Node extends Thread
 	}
     
 	
-    public void makeConnection( User userToConnectWith )
+    public void makeConnection( User userToConnectWith, String messageToSend  )
     {
-    	Scanner scanner = new Scanner( System.in );
-    	String messageToSend = "";
-    	
+   
 		try
 		{
 			this.connectionManager.sendMessage( userToConnectWith, messageToSend );

@@ -24,28 +24,31 @@ public class Mallochite
 		User thisUser = null;
 		User remoteUser = new User();
 		
+		
 		remoteUser.setUUID( "0000-000000" );
 		remoteUser.setIP( "" );
 		remoteUser.setPort( 42423 );
 		remoteUser.setUsername("bill");
 		
+		
 		thisUser = new User();
 		thisUser.setUUID( "1234-12346743-3423567" );
 		thisUser.setUsername( "user1" );
-		thisUser.setIP( "192.168.0.12" );
-		thisUser.setPort( 23950 );
+		thisUser.setIP( "192.168.2.143" );
+		thisUser.setPort( 42423 );
 		thisUser.addConversation( remoteUser );
-
+ 
 
 		try
 		{
 			subNode1 = new SubNode( thisUser );
-			
-			while ( subNode1.isListening() )
+			subNode1.openServerSocket( subNode1.getThisUser().getPort());
+			subNode1.start();
+			ChatManager mngr  = new ChatManager(subNode1);
+			while( subNode1.isListening() )
 			{
+			 mngr.menu();
 				
-				subNode1.openServerSocket( thisUser.getPort() );
-				subNode1.start();
 				
 			}   
       

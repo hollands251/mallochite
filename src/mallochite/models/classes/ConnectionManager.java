@@ -88,7 +88,7 @@ public class ConnectionManager extends Thread
 	public void sendMessage( User userToContact , String messageToSend ) throws IOException
 	{
 
-		Socket socket = new Socket ( userToContact.getIP() , userToContact.getPort() );;
+		Socket socket = new Socket ( userToContact.getIP() , userToContact.getPort() );
 	    BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
 	    PrintWriter out  = new PrintWriter( socket.getOutputStream() );
 	    String messageIn = "";
