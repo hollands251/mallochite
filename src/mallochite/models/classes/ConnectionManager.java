@@ -44,7 +44,7 @@ public class ConnectionManager extends Thread
             out = new PrintWriter( this.metaSocket.getOutputStream() );
             String messageIn = "";
             String messageOut = "";
-            String terminatingString = "TERMINATE";
+            String terminatingString = "RECEIVED";
             
 			while ( listening )
 			{
@@ -53,7 +53,7 @@ public class ConnectionManager extends Thread
 		    	if ( messageIn != null && messageIn != "" )
 		    	{
 		    		// validate message
-		    		System.out.println(messageIn);
+
 		    		HashMap<String , String> parsedData = mallochiteMessageManager.parseDataFromHeader( messageIn );
 		    		thisUser.addMessageToConversation( parsedData.get("UUID") , messageIn );
 		    		
@@ -66,11 +66,15 @@ public class ConnectionManager extends Thread
 		    	if ( messageOut != null && messageOut.contains( terminatingString ) )
 		    	{
 		    		listening = false;
-		    		in.close(); 
 		    		this.metaSocket.close();
 		    	}
 		    	
 		    	messageIn = in.readLine();
+		    	
+		    	if ( messageIn != null )
+		    	{
+		    		System.out.println( messageIn );
+		    	}
 			 }
 		}   
         
@@ -78,6 +82,7 @@ public class ConnectionManager extends Thread
         
         finally
         {
+        	try { in.close(); } catch (IOException e) { e.printStackTrace(); } 
             out.close();
             this.interrupt();
             System.out.println( "Connection closed" );
@@ -91,6 +96,7 @@ public class ConnectionManager extends Thread
      */
 	public void sendMessage( User userToContact , String messageToSend ) throws IOException
 	{
+		System.out.println( "opening socket to send message" );
 		Socket socket = new Socket ( userToContact.getIP() , userToContact.getPort() );
 	    BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
 	    PrintWriter out  = new PrintWriter( socket.getOutputStream() );
@@ -116,10 +122,8 @@ public class ConnectionManager extends Thread
         				break;
         			}
     			}
-    			else
-    			{
+
     				messageIn = in.readLine();
-    			}
     			
     		}
     		

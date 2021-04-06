@@ -24,11 +24,20 @@ public class Mallochite
 		User thisUser = null;
 		User remoteUser = new User();	
 		
+		System.out.println("pick your port");
+		int port = scanner.nextInt();
+		
+		String uuid = scanner.nextLine();
+		
+		System.out.println("set your UUID");
+		uuid = scanner.nextLine();
+		
 		thisUser = new User();
-		thisUser.setUUID( "1234-12346743-3423567" );
 		thisUser.setUsername( "user1" );
-		thisUser.setIP( "192.168.0.12" );
-		thisUser.setPort( 25252 );
+		thisUser.setIP( "192.168.2.58" );
+		
+		thisUser.setPort( port );
+		thisUser.setUUID( uuid );
  
 
 		try
