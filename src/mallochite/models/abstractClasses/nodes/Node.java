@@ -45,9 +45,6 @@ public abstract class Node extends Thread
     }
 	
     
-    
-    
-    
     public void openServerSocket ( int portNumberToUse ) throws IOException
     {
         try
@@ -108,8 +105,11 @@ public abstract class Node extends Thread
                 		this.connectionManager = new ConnectionManager( socketForListening );
                 		this.connectionManager.setThisUser( thisUser );
                 		this.connectionManager.start();
+                		System.out.println("connection manager has stopped");
                 	}
         		}
+        		System.out.println("in this loop");
+
         	}
         }
         catch ( IOException | NoSuchAlgorithmException ex ) { }
@@ -158,5 +158,10 @@ public abstract class Node extends Thread
 	public void setThisUser(User user)
 	{
 		this.thisUser = user;
+	}
+	
+	public ConnectionManager getConnectionManager ()
+	{
+		return this.connectionManager;
 	}
 }

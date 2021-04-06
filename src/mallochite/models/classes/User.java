@@ -14,10 +14,9 @@ public class User
 	private String DuressPassword;
 	private String username;
 	int port;
+	private ArrayList<String> conversation;
 	Hashtable<String , ArrayList<String> > conversations = new Hashtable<String , ArrayList<String> >();
 	private ArrayList<User> userList = new ArrayList<User>();
-	private ArrayList<String>[] conversationHolder = new ArrayList[100]; // TODO dirty hack fix later
-	private int conversationHolderCount = 0;
 
 	//placeholder?
 	public User (String UUID, String passwordHash, String iP, String allowedList, String addressBook,
@@ -28,6 +27,8 @@ public class User
 		this.AllowedList = allowedList;
 		this.AddressBook = addressBook;
 		this.DuressPassword = duressPassword;
+		
+		this.conversation = new ArrayList<String>();
 	}
 	
 	public void addUser(User user) {
@@ -39,23 +40,36 @@ public class User
 	}
 	
 	
-	public User () {}
+	public User () 
+	{
+		this.conversation = new ArrayList<String>();
+	}
 	
 	
 	public void addConversation ( User user )
 	{
-		conversationHolder[ conversationHolderCount ] = new ArrayList<String>();
-		this.conversations.put( user.getUUID() , conversationHolder[ conversationHolderCount ] );
-		conversationHolderCount++;
+		//conversationHolder[ conversationHolderCount ] = new ArrayList<String>();
+		this.conversations.put( user.getUUID() , user.getConversation() );
+		//conversationHolderCount++;
 	}
 	
 	
 	public void addMessageToConversation ( String uuid , String message )
 	{
-		System.out.println(uuid);
 		ArrayList<String> currentConversation = this.conversations.get( uuid );
 		
 		currentConversation.add( message );
+	}
+	
+	
+	public ArrayList<String> getConversation()
+	{
+		return this.conversation;
+	}
+	
+	public void setConversation( ArrayList< String > conversation )
+	{
+		this.conversation = conversation;
 	}
 	
 

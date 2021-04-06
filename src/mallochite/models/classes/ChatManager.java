@@ -30,14 +30,6 @@ public class ChatManager
 		System.out.println( "\t 3. add contact" );
 		System.out.println( "\t 4. list contacts" );
 		
-		User fillerContact = new User();
-		fillerContact.setUsername("user1");
-		fillerContact.setIP( "192.168.0.16" );
-		fillerContact.setUUID( "1234" );
-		fillerContact.setPort( 25252 );
-		this.subNode.getThisUser().addUser( fillerContact );
-		this.subNode.getThisUser().addConversation( fillerContact );
-		
 		String response = scanner.nextLine();
 		
 		if ( response.equals( "1" ) ) 
@@ -62,8 +54,32 @@ public class ChatManager
 
 		}
 		else if ( response.equals( "2" ) ) 
-		{
+		{	
+			User userToRead = null;
 			System.out.println( "Whos messages would you like to check?" );
+			String userName = this.sc.nextLine();
+		    
+			ArrayList<User> userList = (ArrayList<User>) this.subNode.getThisUser().getUserList();
+			
+			for(User user: userList )
+			{
+				if(user.getUsername().equals( userName )) 
+				{		
+					userToRead = user;
+					
+					ArrayList<String> conversation = userToRead.getConversation();
+					
+					for ( String message : conversation )
+					{
+						System.out.println( message );
+					}
+				}
+			}
+			
+			if ( userToRead == null )
+			{
+				System.out.println( "user not found" );
+			}
 		}
 		else if ( response.equals( "3" ) ) 
 		{
@@ -102,29 +118,31 @@ public class ChatManager
 	
 	public void addContact() 
 	{
-		
 		User contact = new User();
 		
-		System.out.println("Enter the username:");
-		String contactUsername = this.sc.nextLine();
+//		System.out.println("Enter the username:");
+//		String contactUsername = this.sc.nextLine();
+//		
+//		System.out.println("Enter the IP address: ");
+//		String contactIP = this.sc.nextLine();
+//		
+//		System.out.println("Enter the UUID ");
+//		String contactUUID = this.sc.nextLine();
+//		
+//		System.out.println("Enter the port:  ");
+//		int contactPort = this.sc.nextInt();
+//
+//		contact.setUsername(contactUsername);
+//		contact.setIP(contactIP);
+//		contact.setUUID(contactUUID);
+//		contact.setPort(contactPort);
 		
-		System.out.println("Enter the IP address: ");
-		String contactIP = this.sc.nextLine();
-		
-		System.out.println("Enter the UUID ");
-		String contactUUID = this.sc.nextLine();
-		
-		System.out.println("Enter the port:  ");
-		int contactPort = this.sc.nextInt();
-
-		contact.setUsername(contactUsername);
-		contact.setIP(contactIP);
-		contact.setUUID(contactUUID);
-		contact.setPort(contactPort);
+		contact.setUsername("user1");
+		contact.setIP("192.168.2.58");
+		contact.setUUID("asdf-123");
+		contact.setPort(25252);
 		
 		this.subNode.getThisUser().addUser( contact );
 		this.subNode.getThisUser().addConversation( contact );
-		
 	}
-	
 }
