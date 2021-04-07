@@ -15,6 +15,8 @@ public class ConnectionManager extends Thread
     private User thisUser;
     private boolean metaSocketAvailable;
     
+    private boolean debugging = true;
+    
     public ConnectionManager()
     {
     	this.metaSocketAvailable = false; // some method require the metaSocket so throw an exception if metaSocketAvailable is false
@@ -38,7 +40,11 @@ public class ConnectionManager extends Thread
         	
         try
 		{
-        	System.out.println( "Received a message" );
+        	if ( debugging )
+        	{
+        		System.out.println( "Received a message" );
+        	}
+        	
         	// must initialize in and out within a try catch in case of IOException
             in = new BufferedReader( new InputStreamReader( this.metaSocket.getInputStream() ) );
             out = new PrintWriter( this.metaSocket.getOutputStream() );
@@ -66,14 +72,16 @@ public class ConnectionManager extends Thread
 		    	if ( messageOut != null && messageOut.contains( terminatingString ) )
 		    	{
 		    		listening = false;
-		    		this.metaSocket.close();
 		    	}
 		    	
 		    	messageIn = in.readLine();
 		    	
 		    	if ( messageIn != null )
 		    	{
-		    		System.out.println( messageIn );
+		        	if ( debugging )
+		        	{
+		        		System.out.println( messageIn );
+		        	}   		
 		    	}
 			 }
 		}   
@@ -82,10 +90,20 @@ public class ConnectionManager extends Thread
         
         finally
         {
-        	try { in.close(); } catch (IOException e) { e.printStackTrace(); } 
+        	try 
+        	{ 	
+        		in.close(); 
+        		this.metaSocket.close();
+        	} 
+        	catch (IOException e) { e.printStackTrace(); } 
+        	
             out.close();
             this.interrupt();
-            System.out.println( "Connection closed" );
+            
+            if ( debugging )
+            {
+            	 System.out.println( "Connection closed" );
+            }
         }
     }
     

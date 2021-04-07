@@ -34,7 +34,7 @@ public class Mallochite
 		
 		thisUser = new User();
 		thisUser.setUsername( "user1" );
-		thisUser.setIP( "192.168.2.58" );
+		thisUser.setIP( "192.168.0.16" );
 		
 		thisUser.setPort( port );
 		thisUser.setUUID( uuid );

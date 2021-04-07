@@ -14,6 +14,8 @@ public class ChatManager
 	private SubNode subNode;
 	private Scanner sc = new Scanner(System.in);
 	
+	private boolean debugging = true;
+	
 	public ChatManager( SubNode subNode )
 	{
 		this.subNode = subNode;
@@ -137,10 +139,10 @@ public class ChatManager
 //		contact.setUUID(contactUUID);
 //		contact.setPort(contactPort);
 		
-		contact.setUsername("user1");
-		contact.setIP("192.168.2.58");
-		contact.setUUID("asdf-123");
-		contact.setPort(25252);
+		contact.setUsername("user2");
+		contact.setIP("192.168.0.16");
+		contact.setUUID("asdf-321");
+		contact.setPort(23456);
 		
 		this.subNode.getThisUser().addUser( contact );
 		this.subNode.getThisUser().addConversation( contact );
