@@ -6,6 +6,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import mallochite.models.classes.nodes.SubNode;
 
 public class ChatManager
@@ -14,7 +17,7 @@ public class ChatManager
 	private SubNode subNode;
 	private Scanner sc = new Scanner(System.in);
 	
-	private boolean debugging = true;
+	private boolean debugging = false;
 	
 	public ChatManager( SubNode subNode )
 	{

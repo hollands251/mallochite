@@ -36,7 +36,7 @@ public abstract class Node extends Thread
     private boolean listening;
     private User thisUser;
     
-    private boolean debugging = true;
+    private boolean debugging = false;
     
     public Node ( User thisUser ) 
     {
@@ -104,13 +104,11 @@ public abstract class Node extends Thread
                 	
                 	if ( !this.connectionManager.isAlive() )
                 	{
-                		System.out.println("runs again");
                 		this.connectionManager = new ConnectionManager( socketForListening );
                 		this.connectionManager.setThisUser( thisUser );
                 		this.connectionManager.start();
                 	}
         		}
-        		System.out.println(this.listening);
         	}
         }
         catch ( IOException | NoSuchAlgorithmException ex ) { }

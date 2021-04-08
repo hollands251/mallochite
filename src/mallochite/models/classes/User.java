@@ -18,7 +18,7 @@ public class User
 	Hashtable<String , ArrayList<String> > conversations = new Hashtable<String , ArrayList<String> >();
 	private ArrayList<User> userList = new ArrayList<User>();
 	
-	private boolean debugging = true;
+	private boolean debugging = false;
 
 	//placeholder?
 	public User (String UUID, String passwordHash, String iP, String allowedList, String addressBook,
