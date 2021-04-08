@@ -36,6 +36,8 @@ public abstract class Node extends Thread
     private boolean listening;
     private User thisUser;
     
+    private boolean debugging = false;
+    
     public Node ( User thisUser ) 
     {
     	this.connectionManager = new ConnectionManager();
@@ -105,11 +107,8 @@ public abstract class Node extends Thread
                 		this.connectionManager = new ConnectionManager( socketForListening );
                 		this.connectionManager.setThisUser( thisUser );
                 		this.connectionManager.start();
-                		System.out.println("connection manager has stopped");
                 	}
         		}
-        		System.out.println("in this loop");
-
         	}
         }
         catch ( IOException | NoSuchAlgorithmException ex ) { }
