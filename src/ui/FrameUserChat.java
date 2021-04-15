@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.JTextArea;
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
@@ -33,6 +34,7 @@ public class FrameUserChat extends JFrame {
 	private JPanel contentPane;
 	JTextArea txtChatArea;
 	JTextArea textArea_1;
+	JButton btnSendMsg;
 	boolean test = false;
 	/**
 	 * Launch the application.
@@ -59,12 +61,12 @@ public class FrameUserChat extends JFrame {
 	public FrameUserChat() {
 		test = false;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(500, 500, 800, 600);
+		setBounds(500, 500, 830, 650);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(0, 100, 0));
 		contentPane.setBorder(new LineBorder(new Color(0, 128, 0), 4));
 		setContentPane(contentPane);
-		setUndecorated(true);
+		//setUndecorated(true);
 		contentPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
@@ -79,7 +81,7 @@ public class FrameUserChat extends JFrame {
 		txtChatArea.setBounds(10, 479, 445, 58);
 		panel.add(txtChatArea);
 		
-		JButton btnSendMsg = new JButton("SEND");
+		btnSendMsg = new JButton("SEND");
 		btnSendMsg.setBorder(new LineBorder(new Color(0, 0, 0), 3));
 		btnSendMsg.setForeground(Color.WHITE);
 		btnSendMsg.setBackground(new Color(0, 100, 0));
@@ -170,6 +172,16 @@ public class FrameUserChat extends JFrame {
 		lblFriendName.setFont(new Font("Tahoma", Font.BOLD, 16));
 	}
 
+	public JButton getBtnSendMsg() {
+		return btnSendMsg;
+	}
+
+
+	public void setBtnSendMsg(JButton btnSendMsg) {
+		this.btnSendMsg = btnSendMsg;
+	}
+
+
 	public String gettxtChatArea() {
 		return txtChatArea.getText();
 	}
@@ -187,4 +199,7 @@ public class FrameUserChat extends JFrame {
 	{
 		return test;
 	}
+
+
+	
 }

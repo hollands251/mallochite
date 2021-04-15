@@ -1,5 +1,7 @@
 package mallochite.models.classes;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -10,8 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mallochite.models.classes.nodes.SubNode;
-import ui.FrameAddMember;
-import ui.FrameLoginChat;
 import ui.FrameUserChat;
 
 public class ChatManager
@@ -19,13 +19,13 @@ public class ChatManager
 	private Socket socket;
 	private SubNode subNode;
 	private Scanner sc = new Scanner(System.in);
-	FrameAddMember frame2 = new FrameAddMember();
 	FrameUserChat frameChat = new FrameUserChat();
-	private boolean debugging = false;
 	
 	public ChatManager( SubNode subNode )
 	{
 		this.subNode = subNode;
+		
+		
 	}
 	
 	
@@ -39,53 +39,23 @@ public class ChatManager
 		System.out.println( "\t 3. add contact" );
 		System.out.println( "\t 4. list contacts" );
 		
-		/*FrameLoginChat frame = new FrameLoginChat();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);*/
-		//FrameUserChat frame = new FrameUserChat();
-	//	frame.setLocationRelativeTo(null);
-	//	frame.setVisible(true);
-		
-		
-		
-		frame2.setVisible(true);
-		
-		
-		
 		String response = scanner.nextLine();
 		
 		if ( response.equals( "1" ) ) 
 		{
-			
-			
-			frameChat.setLocationRelativeTo(null);
 			frameChat.setVisible(true);
 			
 			User userToContact = null;
-			System.out.println( "Who would you like to contact? \n" );
+			System.out.println( "Who would you like to contact?" );
 			String userName = this.sc.nextLine();
-			
-			
-			//text area testing :(
-			System.out.println(frameChat.getTest());
-			
-			
-		    while (!frameChat.getTest()) {
-			System.out.println(frameChat.gettxtChatArea());
-			
-			
-		   
-		    
-		    }
-		    
-		    frameChat.setTextArea_1(frameChat.gettxtChatArea());
-		    
 		    
 			ArrayList<User> userList = (ArrayList<User>) this.subNode.getThisUser().getUserList();
 			
 			for(User user: userList ){
 				if(user.getUsername().equals( userName )) {
 				
+					
+					//frameChat.setTextArea_1();
 					userToContact = user;
 					this.sendMessage( userToContact );
 				}
@@ -98,6 +68,8 @@ public class ChatManager
 		}
 		else if ( response.equals( "2" ) ) 
 		{	
+			frameChat.setVisible(true);
+			
 			User userToRead = null;
 			System.out.println( "Whos messages would you like to check?" );
 			String userName = this.sc.nextLine();
@@ -115,6 +87,8 @@ public class ChatManager
 					for ( String message : conversation )
 					{
 						System.out.println( message );
+						frameChat.setTextArea_1(userName+": "+message);
+						
 					}
 				}
 			}
@@ -126,7 +100,6 @@ public class ChatManager
 		}
 		else if ( response.equals( "3" ) ) 
 		{
-			
 			this.addContact();
 		}
 		else if ( response.equals( "4" ) )
@@ -134,22 +107,43 @@ public class ChatManager
 			this.displayContacts();
 		}
 	}
+	String messageToSend = "";
 	
-	
-	private void sendMessage(User userToContact) throws IOException 
+	private void sendMessage(User userToContact) throws IOException  ///////////////////////////////////////rgdeftqjnklmdflesrnmawk jewfrashjn ikijuhbnfswdea hjuikm,.n bdfseaw hybjnu, kmdfsea
 	{
+		messageToSend = "";
+		System.out.println("Enter message to send: ");	
+				
+		frameChat.getBtnSendMsg().addActionListener((new ActionListener() {
+ 
+		 
+
+			@Override
+		    public void actionPerformed(ActionEvent e) {
+		        //your actions
+		    	messageToSend = frameChat.gettxtChatArea()+"";		
+		    	System.out.println("workd");
+		    	
+		    }
+		}));
+			
 		
-		
-		System.out.println("Enter message to send: ");
-		String messageToSend = null;
-		
-		//test button
-		while (frameChat.getTest())
-		{
-		messageToSend = this.sc.nextLine();
+		while (true) {
+			//messageToSend = "";
+			System.out.print("WHY IS THIS HERE"); //IF NOT HERE IT BREAK
+			
+			 if (messageToSend.length() > 0)
+			 {
+				 frameChat.setTextArea_1("You: "+messageToSend);
+				 this.subNode.makeConnection(userToContact, messageToSend);
+				 break;
+			 }
 		}
 		
-		this.subNode.makeConnection(userToContact, messageToSend);
+		
+	
+		
+		
 	}
 
 
@@ -171,39 +165,32 @@ public class ChatManager
 	{
 		User contact = new User();
 		
-//		System.out.println("Enter the username:");
-//		String contactUsername = this.sc.nextLine();
-//		
-//		System.out.println("Enter the IP address: ");
-//		String contactIP = this.sc.nextLine();
-//		
-//		System.out.println("Enter the UUID ");
-//		String contactUUID = this.sc.nextLine();
-//		
-//		System.out.println("Enter the port:  ");
-//		int contactPort = this.sc.nextInt();
-//
-//		contact.setUsername(contactUsername);
-//		contact.setIP(contactIP);
-//		contact.setUUID(contactUUID);
-//		contact.setPort(contactPort);
-		//FrameAddMember frame2 = new FrameAddMember();
-		//frame2.setVisible(true);
 		
-		contact.setUsername("user2");
-		contact.setIP("192.168.0.16");
-		//contact.setUUID("asdf-321");
-		System.out.println("Enter the UUID ");
-		//String contactUUID = this.sc.nextLine();
-		String contactUUID = frame2.getTxtUniqueId();
-		System.out.println(contactUUID);
-		contact.setUUID(contactUUID);
+			contact.setUsername( this.subNode.getThisUser().getUserList().get( 0 ).getUsername() );
+			contact.setIP( this.subNode.getThisUser().getUserList().get( 0 ).getIP() );
+			contact.setUUID( this.subNode.getThisUser().getUserList().get( 0 ).getUUID() );
+			contact.setPort( this.subNode.getThisUser().getUserList().get( 0 ).getPort() );
 		
-		contact.setPort(23456);
+			/*//System.out.println("Enter the username:");
+			String contactUsername = this.sc.nextLine();
+			
+			//System.out.println("Enter the IP address: ");
+			String contactIP = this.sc.nextLine();
+			
+			//System.out.println("Enter the UUID ");
+			String contactUUID = this.sc.nextLine();
+			
+			//System.out.println("Enter the port:  ");
+			int contactPort = this.sc.nextInt();
+
+			contact.setUsername(contactUsername);
+			contact.setIP(contactIP);
+			contact.setUUID(contactUUID);
+			//contact.setPort(contactPort);*/
 		
-	
 		
 		this.subNode.getThisUser().addUser( contact );
 		this.subNode.getThisUser().addConversation( contact );
 	}
 }
+

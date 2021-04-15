@@ -35,6 +35,8 @@ public class User
 	
 	public void addUser(User user) {
 		this.userList.add(user);
+		
+		
 	}
 	
 	public ArrayList<User> getUserList() {

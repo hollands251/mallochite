@@ -1,6 +1,7 @@
 package mallochite.implementations.main;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.InvalidKeyException;
@@ -20,25 +21,32 @@ public class Mallochite
 	{
 		
 		Scanner scanner = new Scanner( System.in );
+		InetAddress inetAddress = InetAddress.getLocalHost();
 		SubNode subNode1 = null;
-		User thisUser = null;
-		User remoteUser = new User();	
+		User thisUser = new User();
+		User remoteUser = new User();
 		
-		System.out.println("pick your port");
-		int port = scanner.nextInt();
 		
-		String uuid = scanner.nextLine();
 		
-		System.out.println("set your UUID");
-		uuid = scanner.nextLine();
 		
-		thisUser = new User();
-		thisUser.setUsername( "user1" );
-		thisUser.setIP( "192.168.0.16" );
+			
+			remoteUser = new User();
+			
+			remoteUser.setIP( inetAddress.getHostAddress() );
+			remoteUser.setPort( 23457 );
+			remoteUser.setUsername( "user1" );
+			remoteUser.setUUID( "asdf-321" );
+			
 		
-		thisUser.setPort( port );
-		thisUser.setUUID( uuid );
- 
+		
+		
+		
+		thisUser.setUsername( "user2" );
+		thisUser.setIP( inetAddress.getHostAddress() );
+		thisUser.setPort( 42422 );
+		thisUser.setUUID( "asdf-123" );
+		
+		thisUser.getUserList().add(remoteUser);
 
 		try
 		{
