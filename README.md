@@ -9,4 +9,4 @@ Developers:
 | Andrew Hollands      	| holandre@sheridancollege.ca 	| Developer / Project Lead 				|
 | Mansur Oralov      	| oralov.mansur@gmail.com	| Developer/Administrative assistant	|
 | Joseph Escober 	| escober@sheridancollege.ca	| Developer				|
-| Sean Brachvogel	| seancbrachvogelgmail.com	| Developer				|
+| Sean Brachvogel	| seancbrachvogel@gmail.com	| Developer				|
